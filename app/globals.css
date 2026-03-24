@@ -72,4 +72,64 @@ body {
   .memory-row-active {
     @apply border-accent/50 bg-accent/10;
   }
+
+  .constellation-section {
+    @apply relative overflow-hidden p-5;
+    background-image:
+      linear-gradient(rgba(124, 156, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(124, 156, 255, 0.03) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  .stat-card {
+    @apply rounded-xl border border-border bg-bg-primary/60 p-3.5;
+  }
+
+  .gauge-card {
+    @apply relative overflow-hidden rounded-2xl border border-border bg-bg-primary/50 p-4 text-center;
+  }
+
+  .gauge-ring-arc {
+    transition: stroke-dasharray 600ms ease-out;
+  }
+
+  .chart-section {
+    @apply relative overflow-hidden rounded-2xl border border-border bg-bg-primary/50 p-5;
+    background-image:
+      linear-gradient(rgba(124, 156, 255, 0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(124, 156, 255, 0.025) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  .sparkline-fade-in {
+    animation: sparkline-in 200ms ease-out forwards;
+  }
+
+  @keyframes sparkline-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes glow-pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+  }
+
+  .constellation-glow-pulse {
+    animation: glow-pulse 3s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gauge-ring-arc {
+      transition: none;
+    }
+    .sparkline-fade-in {
+      animation: none;
+      opacity: 1;
+    }
+    .constellation-glow-pulse {
+      animation: none;
+      opacity: 0.8;
+    }
+  }
 }
