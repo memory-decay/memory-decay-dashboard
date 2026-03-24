@@ -32,7 +32,7 @@ export const DEFAULT_DECAY_PARAMS: DecayParams = {
 
 /** Numerically stable logistic gate — mirrors _sigmoid_gate in decay.py */
 export function sigmoidGate(value: number, center: number, width: number): number {
-  const scaled = 2 * (value - center) / Math.max(width, 1e-6)
+  const scaled = (value - center) / Math.max(width, 1e-6)
   if (scaled >= 0) {
     const z = Math.exp(-scaled)
     return 1.0 / (1.0 + z)
