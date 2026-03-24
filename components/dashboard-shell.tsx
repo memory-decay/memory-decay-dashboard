@@ -1,10 +1,10 @@
 "use client"
 
 import { useMemo, useState } from "react"
+import { Constellation } from "@/components/constellation"
 import { DbPicker } from "@/components/db-picker"
 import { FadingMemoriesPanel } from "@/components/fading-memories-panel"
 import { MemoryDetailPanel } from "@/components/memory-detail-panel"
-import { MetricRibbon } from "@/components/metric-ribbon"
 import { ReinforcedMemoriesPanel } from "@/components/reinforced-memories-panel"
 import type { DerivedMemoryState } from "@/lib/types"
 
@@ -92,21 +92,20 @@ export function DashboardShell() {
 
   return (
     <main className="mx-auto flex min-h-screen max-w-[1560px] flex-col gap-6 px-5 py-8 lg:px-8">
-      <section className="flex flex-col gap-3">
-        <p className="label">memory-decay-dashboard</p>
-        <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
-          <div className="max-w-3xl">
-            <h1 className="text-4xl font-semibold tracking-tight text-text-primary md:text-5xl">
-              Watch which memories are fading, and which survive because they were reinforced.
-            </h1>
-            <p className="mt-4 text-base leading-7 text-text-secondary">
-              This dashboard reads compatible memory-decay SQLite databases in read-only mode and explains
-              forgetting and survival from current-state signals rather than pretending to reconstruct full
-              history.
-            </p>
-          </div>
-          <div className="metric-chip">Supports user-memory + LongMemEval-compatible DBs</div>
+      {/* Header */}
+      <section className="flex items-end justify-between gap-4">
+        <div>
+          <p className="label">memory-decay-dashboard</p>
+          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-text-primary">
+            Memory Decay Observatory
+          </h1>
         </div>
+        {data ? (
+          <div className="inline-flex items-center gap-2 rounded-full border border-border bg-bg-primary/70 px-3.5 py-1.5 font-mono text-xs text-text-secondary">
+            <span className="h-1.5 w-1.5 rounded-full bg-status-stable" style={{ boxShadow: "0 0 6px rgba(52,211,153,0.5)" }} />
+            {data.path.split("/").pop()}
+          </div>
+        ) : null}
       </section>
 
       <DbPicker value={path} onChange={setPath} onLoad={loadSummary} loading={loading} recentPaths={recentPaths} />
@@ -117,12 +116,19 @@ export function DashboardShell() {
         </section>
       ) : null}
 
-      <MetricRibbon
-        currentTick={data?.meta.currentTick ?? 0}
-        memoryCount={data?.meta.memoryCount ?? 0}
-        associationCount={data?.meta.associationCount ?? 0}
-        spotlightLabel={data?.spotlight ? `${data.spotlight.id} — ${data.spotlight.explanation.summary}` : undefined}
-      />
+      {/* Constellation Hero */}
+      {data ? (
+        <Constellation
+          memories={data.byId}
+          selectedId={selectedId}
+          onSelect={setSelectedId}
+          currentTick={data.meta.currentTick}
+          memoryCount={data.meta.memoryCount}
+          associationCount={data.meta.associationCount}
+          spotlightLabel={data.spotlight ? `${data.spotlight.id} — ${data.spotlight.explanation.summary}` : undefined}
+          spotlightId={data.spotlight?.id}
+        />
+      ) : null}
 
       <section className="grid gap-6 xl:grid-cols-[0.95fr_0.95fr_1.25fr]">
         <FadingMemoriesPanel
