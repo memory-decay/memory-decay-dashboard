@@ -1,3 +1,4 @@
+import { Sparkline } from "@/components/sparkline"
 import type { DerivedMemoryState } from "@/lib/types"
 
 type MemoryListPanelProps = {
@@ -45,14 +46,15 @@ export function MemoryListPanel({
             onClick={() => onSelect(memory.id)}
             className={`memory-row ${selectedId === memory.id ? "memory-row-active" : ""}`}
           >
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="font-medium text-text-primary">{memory.id}</p>
-                <p className="mt-1 text-sm text-text-secondary">{memory.content.slice(0, 110)}</p>
+            <div className="flex items-center gap-3">
+              <div className="min-w-0 flex-1">
+                <p className="truncate font-medium text-text-primary">{memory.id}</p>
+                <p className="mt-1 truncate text-sm text-text-secondary">{memory.content.slice(0, 110)}</p>
               </div>
-              <div className="text-right">
-                <p className={`text-xs uppercase tracking-[0.22em] ${scoreToneClassName}`}>{scoreLabel}</p>
-                <p className={`mt-1 text-2xl font-semibold ${scoreToneClassName}`}>
+              <Sparkline memory={memory} />
+              <div className="w-12 flex-shrink-0 text-right">
+                <p className={`text-[8px] uppercase tracking-[0.15em] ${scoreToneClassName}`}>{scoreLabel}</p>
+                <p className={`mt-0.5 font-mono text-lg font-semibold ${scoreToneClassName}`}>
                   {formatScore(score(memory))}
                 </p>
               </div>
