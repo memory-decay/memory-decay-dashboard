@@ -6,17 +6,10 @@ import {
   PieChart, Pie, Cell, LineChart, Line, AreaChart, Area, Legend,
 } from "recharts"
 import { getAllMemories, getHistorySummary } from "@/lib/api"
-import { Memory, HistorySummary, getFreshnessStatus } from "@/lib/types"
+import { Memory, HistorySummary, getFreshnessStatus, MTYPE_LABELS, CHART_TOOLTIP_STYLE } from "@/lib/types"
 import { MOCK_MEMORIES } from "@/lib/mock-data"
 import Link from "next/link"
 import StatusBadge from "@/components/status-badge"
-
-const MTYPE_LABELS: Record<string, string> = {
-  fact: "사실",
-  episode: "에피소드",
-  decision: "결정",
-  preference: "선호",
-}
 
 const PIE_COLORS = ["#7c9cff", "#49dcb1", "#f5a65b", "#f87171"]
 
@@ -39,14 +32,6 @@ function buildCategoryCounts(memories: Memory[]): { name: string; value: number 
     counts[label] = (counts[label] || 0) + 1
   }
   return Object.entries(counts).map(([name, value]) => ({ name, value }))
-}
-
-const CHART_TOOLTIP_STYLE = {
-  background: "#151821",
-  border: "1px solid #263042",
-  borderRadius: 8,
-  fontSize: 12,
-  color: "#f8fafc",
 }
 
 export default function AnalyticsPage() {

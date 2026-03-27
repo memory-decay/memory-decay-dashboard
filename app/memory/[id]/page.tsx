@@ -7,27 +7,12 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
 } from "recharts"
 import { getMemoryById, forgetMemory, advanceTick, getMemoryHistory } from "@/lib/api"
-import { Memory, ActivationRecord, getFreshnessStatus } from "@/lib/types"
+import { Memory, ActivationRecord, getFreshnessStatus, MTYPE_LABELS, CHART_TOOLTIP_STYLE } from "@/lib/types"
 import { MOCK_MEMORIES } from "@/lib/mock-data"
 import { ticksUntilThreshold } from "@/lib/decay"
 import StatusBadge from "@/components/status-badge"
 import ScoreDisplay from "@/components/score-display"
 import DecayChart from "@/components/decay-chart"
-
-const MTYPE_LABELS: Record<string, string> = {
-  fact: "사실",
-  episode: "에피소드",
-  decision: "결정",
-  preference: "선호",
-}
-
-const CHART_TOOLTIP_STYLE = {
-  background: "#151821",
-  border: "1px solid #263042",
-  borderRadius: 8,
-  fontSize: 12,
-  color: "#f8fafc",
-}
 
 export default function MemoryDetailPage() {
   const params = useParams()
@@ -63,12 +48,8 @@ export default function MemoryDetailPage() {
 
   async function handleReinforce() {
     if (!memory) return
-    try {
-      await advanceTick(0)
-      setMemory(prev => prev ? { ...prev, retrieval_score: Math.min(1, prev.retrieval_score + 0.1) } : prev)
-    } catch {
-      setMemory(prev => prev ? { ...prev, retrieval_score: Math.min(1, prev.retrieval_score + 0.1) } : prev)
-    }
+    try { await advanceTick(0) } catch {}
+    setMemory(prev => prev ? { ...prev, retrieval_score: Math.min(1, prev.retrieval_score + 0.1) } : prev)
   }
 
   if (loading) {

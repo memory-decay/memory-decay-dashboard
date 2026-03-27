@@ -31,7 +31,7 @@ export interface HealthStatus {
 export interface StoreRequest {
   text: string
   importance: number
-  mtype: string
+  mtype: Memory["mtype"]
   category: string
   associations?: string[]
   created_tick?: number
@@ -100,6 +100,23 @@ export interface ActivationRecord {
   storage_score: number
   stability: number
   recorded_at: number
+}
+
+// ── Shared UI Constants ────────────────────────────────────
+
+export const MTYPE_LABELS: Record<string, string> = {
+  fact: "사실",
+  episode: "에피소드",
+  decision: "결정",
+  preference: "선호",
+}
+
+export const CHART_TOOLTIP_STYLE = {
+  background: "#151821",
+  border: "1px solid #263042",
+  borderRadius: 8,
+  fontSize: 12,
+  color: "#f8fafc",
 }
 
 // ── Decay Params (Feature 2) ────────────────────────────────
@@ -178,6 +195,7 @@ export const DECAY_PARAM_GROUPS: { label: string; group: DecayParamMeta["group"]
     params: [
       { key: "reinforcement_gain_direct", label: "직접 강화 게인", group: "reinforcement", min: 0.0, max: 1.0, step: 0.01 },
       { key: "reinforcement_gain_assoc", label: "연관 강화 게인", group: "reinforcement", min: 0.0, max: 0.5, step: 0.01 },
+      { key: "consolidation_gain", label: "통합 게인", group: "reinforcement", min: 0.0, max: 1.0, step: 0.05 },
     ],
   },
   {
@@ -189,6 +207,7 @@ export const DECAY_PARAM_GROUPS: { label: string; group: DecayParamMeta["group"]
       { key: "floor_power", label: "바닥 지수", group: "soft_floor", min: 0.5, max: 5.0, step: 0.1 },
       { key: "gate_center", label: "게이트 중심", group: "soft_floor", min: 0.0, max: 1.0, step: 0.05 },
       { key: "gate_width", label: "게이트 폭", group: "soft_floor", min: 0.01, max: 0.5, step: 0.01 },
+      { key: "min_rate_scale", label: "최소 비율 스케일", group: "soft_floor", min: 0.0, max: 0.5, step: 0.01 },
     ],
   },
 ]

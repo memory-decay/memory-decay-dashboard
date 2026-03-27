@@ -152,7 +152,7 @@ export default function AdminPage() {
                 <label className="mb-1 block text-xs text-text-muted">유형</label>
                 <select
                   value={newMemory.mtype}
-                  onChange={(e) => setNewMemory(prev => ({ ...prev, mtype: e.target.value }))}
+                  onChange={(e) => setNewMemory(prev => ({ ...prev, mtype: e.target.value as StoreRequest["mtype"] }))}
                   className="input-field"
                 >
                   {MTYPE_OPTIONS.map((opt) => (
