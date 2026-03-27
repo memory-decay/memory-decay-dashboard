@@ -2,23 +2,25 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useTranslations } from "next-intl"
 
 interface NavItem {
   href: string
-  label: string
+  labelKey: string
   icon: string
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { href: "/", label: "대시보드", icon: "⊞" },
-  { href: "/search", label: "검색", icon: "⊘" },
-  { href: "/analytics", label: "분석", icon: "⊡" },
-  { href: "/graph", label: "연관 그래프", icon: "⊛" },
-  { href: "/admin", label: "관리", icon: "⊛" },
+  { href: "/", labelKey: "sidebar.nav.dashboard", icon: "⊞" },
+  { href: "/search", labelKey: "sidebar.nav.search", icon: "⊘" },
+  { href: "/analytics", labelKey: "sidebar.nav.analytics", icon: "⊡" },
+  { href: "/graph", labelKey: "sidebar.nav.graph", icon: "⊛" },
+  { href: "/admin", labelKey: "sidebar.nav.admin", icon: "⊛" },
 ]
 
 export default function Sidebar() {
   const pathname = usePathname()
+  const t = useTranslations()
 
   return (
     <aside className="fixed left-0 top-0 z-40 flex h-screen w-56 flex-col border-r border-border bg-bg-surface/95 backdrop-blur-sm">
@@ -29,7 +31,7 @@ export default function Sidebar() {
         </div>
         <div>
           <div className="text-sm font-semibold text-text-primary">Memory Decay</div>
-          <div className="text-[10px] text-text-muted">관리 대시보드</div>
+          <div className="text-[10px] text-text-muted">{t('sidebar.subtitle')}</div>
         </div>
       </div>
 
@@ -48,7 +50,7 @@ export default function Sidebar() {
               }`}
             >
               <span className="text-base">{item.icon}</span>
-              {item.label}
+              {t(item.labelKey)}
             </Link>
           )
         })}
@@ -58,7 +60,7 @@ export default function Sidebar() {
       <div className="border-t border-border px-4 py-3">
         <div className="flex items-center gap-2 text-xs text-text-muted">
           <span className="inline-block h-2 w-2 rounded-full bg-status-stable animate-pulse" />
-          서버 상태
+          {t('sidebar.serverStatus')}
         </div>
         <div className="mt-1 font-mono text-[10px] text-text-muted">
           localhost:8100

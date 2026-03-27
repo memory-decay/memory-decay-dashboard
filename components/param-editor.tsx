@@ -3,8 +3,11 @@
 import { useState, useEffect, useCallback } from "react"
 import { DecayParams, DEFAULT_DECAY_PARAMS, DECAY_PARAM_GROUPS, DecayParamMeta } from "@/lib/types"
 import { getDecayParams, updateDecayParams } from "@/lib/api"
+import { useTranslations } from "next-intl"
 
 export default function ParamEditor() {
+  const t = useTranslations('paramEditor')
+  const tTypes = useTranslations('types')
   const [params, setParams] = useState<DecayParams>({ ...DEFAULT_DECAY_PARAMS })
   const [saved, setSaved] = useState<DecayParams>({ ...DEFAULT_DECAY_PARAMS })
   const [loading, setLoading] = useState(true)
@@ -26,15 +29,15 @@ export default function ParamEditor() {
   }, [])
 
   async function handleSave() {
-    if (!confirm("감쇠 파라미터를 변경하면 모든 메모리의 감쇠 동작에 즉시 영향을 줍니다. 저장하시겠습니까?")) return
+    if (!confirm(t('confirmChange'))) return
     setSaving(true)
     setMessage(null)
     try {
       await updateDecayParams(params)
       setSaved({ ...params })
-      setMessage({ text: "저장되었습니다.", type: "ok" })
+      setMessage({ text: t('saveSuccess'), type: "ok" })
     } catch {
-      setMessage({ text: "서버에 연결할 수 없습니다.", type: "err" })
+      setMessage({ text: t('saveError'), type: "err" })
     }
     setSaving(false)
   }
@@ -49,7 +52,7 @@ export default function ParamEditor() {
     setMessage(null)
   }
 
-  if (loading) return <div className="text-text-muted text-sm">파라미터 불러오는 중...</div>
+  if (loading) return <div className="text-text-muted text-sm">{t('loading')}</div>
 
   return (
     <div className="space-y-5">
@@ -62,7 +65,7 @@ export default function ParamEditor() {
       {DECAY_PARAM_GROUPS.map(group => (
         <details key={group.group} open={group.group === "basic"} className="panel overflow-hidden">
           <summary className="cursor-pointer select-none px-5 py-3 text-sm font-semibold text-text-primary hover:bg-bg-elevated/40 transition-colors">
-            {group.label}
+            {tTypes(group.label)}
           </summary>
           <div className="space-y-4 px-5 pb-5 pt-2">
             {group.params.map(meta => (
@@ -71,6 +74,7 @@ export default function ParamEditor() {
                 meta={meta}
                 value={params[meta.key]}
                 onChange={v => update(meta.key, v)}
+                label={tTypes(meta.label)}
               />
             ))}
           </div>
@@ -80,15 +84,15 @@ export default function ParamEditor() {
       {/* Actions */}
       <div className="flex items-center gap-3">
         <button onClick={handleSave} disabled={saving || !dirty} className="btn-primary disabled:opacity-40">
-          {saving ? "저장 중..." : "저장"}
+          {saving ? t('saving') : t('save')}
         </button>
         {dirty && (
-          <button onClick={handleRevert} className="btn-secondary">되돌리기</button>
+          <button onClick={handleRevert} className="btn-secondary">{t('revert')}</button>
         )}
-        <button onClick={handleReset} className="btn-secondary ml-auto">기본값 복원</button>
+        <button onClick={handleReset} className="btn-secondary ml-auto">{t('resetDefaults')}</button>
         {dirty && (
           <span className="rounded-full bg-accent/20 px-2 py-0.5 text-[10px] font-medium text-accent">
-            변경됨
+            {t('changed')}
           </span>
         )}
       </div>
@@ -96,11 +100,11 @@ export default function ParamEditor() {
   )
 }
 
-function ParamRow({ meta, value, onChange }: { meta: DecayParamMeta; value: number; onChange: (v: number) => void }) {
+function ParamRow({ meta, value, onChange, label }: { meta: DecayParamMeta; value: number; onChange: (v: number) => void; label: string }) {
   return (
     <div className="space-y-1">
       <div className="flex items-center justify-between">
-        <label className="text-xs text-text-secondary">{meta.label}</label>
+        <label className="text-xs text-text-secondary">{label}</label>
         <input
           type="number"
           min={meta.min}

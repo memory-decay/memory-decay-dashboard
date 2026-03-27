@@ -2,31 +2,27 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Memory, SortField, SortDirection, getFreshnessStatus } from "@/lib/types"
+import { Memory, SortField, SortDirection, getFreshnessStatus, MTYPE_LABELS } from "@/lib/types"
+import { useTranslations } from "next-intl"
 import StatusBadge from "./status-badge"
 
 interface MemoryTableProps {
   memories: Memory[]
 }
 
-const SORT_LABELS: Record<SortField, string> = {
-  importance: "중요도",
-  retrieval_score: "활성도",
-  created_tick: "생성 틱",
-  category: "카테고리",
-  storage_score: "저장 점수",
-}
-
-const MTYPE_LABELS: Record<string, string> = {
-  fact: "사실",
-  episode: "에피소드",
-  decision: "결정",
-  preference: "선호",
-}
+const SORT_FIELD_KEYS: SortField[] = [
+  "importance",
+  "retrieval_score",
+  "created_tick",
+  "category",
+  "storage_score",
+]
 
 export default function MemoryTable({ memories }: MemoryTableProps) {
   const [sortField, setSortField] = useState<SortField>("retrieval_score")
   const [sortDir, setSortDir] = useState<SortDirection>("desc")
+  const t = useTranslations('table')
+  const tTypes = useTranslations('types')
 
   function handleSort(field: SortField) {
     if (field === sortField) {
@@ -53,22 +49,22 @@ export default function MemoryTable({ memories }: MemoryTableProps) {
         <table className="w-full">
           <thead>
             <tr className="border-b border-border">
-              {(Object.keys(SORT_LABELS) as SortField[]).map((field) => (
+              {SORT_FIELD_KEYS.map((field) => (
                 <th key={field} className="table-header">
                   <button
                     onClick={() => handleSort(field)}
                     className="flex items-center gap-1 hover:text-text-primary transition-colors"
                   >
-                    {SORT_LABELS[field]}
+                    {t(`sortField.${field}`)}
                     {sortField === field && (
                       <span className="text-accent">{sortDir === "asc" ? "↑" : "↓"}</span>
                     )}
                   </button>
                 </th>
               ))}
-              <th className="table-header">유형</th>
-              <th className="table-header">상태</th>
-              <th className="table-header">내용</th>
+              <th className="table-header">{t('type')}</th>
+              <th className="table-header">{t('status')}</th>
+              <th className="table-header">{t('content')}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border/50">
@@ -93,7 +89,7 @@ export default function MemoryTable({ memories }: MemoryTableProps) {
                 </td>
                 <td className="table-cell">
                   <span className="inline-flex rounded-md bg-bg-elevated px-2 py-0.5 text-xs text-text-muted">
-                    {MTYPE_LABELS[memory.mtype] || memory.mtype}
+                    {tTypes(MTYPE_LABELS[memory.mtype] || memory.mtype)}
                   </span>
                 </td>
                 <td className="table-cell">

@@ -63,9 +63,9 @@ export function getFreshnessStatus(freshness: number): FreshnessStatus {
 
 export function getFreshnessLabel(status: FreshnessStatus): string {
   switch (status) {
-    case "fresh": return "신선"
-    case "normal": return "보통"
-    case "stale": return "소멸 위험"
+    case "fresh": return "types.freshness.fresh"
+    case "normal": return "types.freshness.normal"
+    case "stale": return "types.freshness.stale"
   }
 }
 
@@ -105,10 +105,10 @@ export interface ActivationRecord {
 // ── Shared UI Constants ────────────────────────────────────
 
 export const MTYPE_LABELS: Record<string, string> = {
-  fact: "사실",
-  episode: "에피소드",
-  decision: "결정",
-  preference: "선호",
+  fact: "types.memoryType.fact",
+  episode: "types.memoryType.episode",
+  decision: "types.memoryType.decision",
+  preference: "types.memoryType.preference",
 }
 
 export const CHART_TOOLTIP_STYLE = {
@@ -172,42 +172,42 @@ export interface DecayParamMeta {
 
 export const DECAY_PARAM_GROUPS: { label: string; group: DecayParamMeta["group"]; params: DecayParamMeta[] }[] = [
   {
-    label: "기본 감쇠",
+    label: "types.decayParamGroup.basic",
     group: "basic",
     params: [
-      { key: "lambda_fact", label: "사실 감쇠율 (λ_fact)", group: "basic", min: 0.001, max: 0.1, step: 0.001 },
-      { key: "lambda_episode", label: "에피소드 감쇠율 (λ_episode)", group: "basic", min: 0.001, max: 0.1, step: 0.001 },
-      { key: "alpha", label: "임팩트 가중치 (α)", group: "basic", min: 0.0, max: 2.0, step: 0.05 },
+      { key: "lambda_fact", label: "types.decayParam.lambda_fact", group: "basic", min: 0.001, max: 0.1, step: 0.001 },
+      { key: "lambda_episode", label: "types.decayParam.lambda_episode", group: "basic", min: 0.001, max: 0.1, step: 0.001 },
+      { key: "alpha", label: "types.decayParam.alpha", group: "basic", min: 0.0, max: 2.0, step: 0.05 },
     ],
   },
   {
-    label: "안정성",
+    label: "types.decayParamGroup.stability",
     group: "stability",
     params: [
-      { key: "stability_weight", label: "안정성 가중치 (ρ)", group: "stability", min: 0.0, max: 2.0, step: 0.05 },
-      { key: "stability_decay", label: "안정성 감쇠", group: "stability", min: 0.0, max: 0.1, step: 0.005 },
-      { key: "stability_cap", label: "안정성 상한", group: "stability", min: 0.5, max: 2.0, step: 0.1 },
+      { key: "stability_weight", label: "types.decayParam.stability_weight", group: "stability", min: 0.0, max: 2.0, step: 0.05 },
+      { key: "stability_decay", label: "types.decayParam.stability_decay", group: "stability", min: 0.0, max: 0.1, step: 0.005 },
+      { key: "stability_cap", label: "types.decayParam.stability_cap", group: "stability", min: 0.5, max: 2.0, step: 0.1 },
     ],
   },
   {
-    label: "강화",
+    label: "types.decayParamGroup.reinforcement",
     group: "reinforcement",
     params: [
-      { key: "reinforcement_gain_direct", label: "직접 강화 게인", group: "reinforcement", min: 0.0, max: 1.0, step: 0.01 },
-      { key: "reinforcement_gain_assoc", label: "연관 강화 게인", group: "reinforcement", min: 0.0, max: 0.5, step: 0.01 },
-      { key: "consolidation_gain", label: "통합 게인", group: "reinforcement", min: 0.0, max: 1.0, step: 0.05 },
+      { key: "reinforcement_gain_direct", label: "types.decayParam.reinforcement_gain_direct", group: "reinforcement", min: 0.0, max: 1.0, step: 0.01 },
+      { key: "reinforcement_gain_assoc", label: "types.decayParam.reinforcement_gain_assoc", group: "reinforcement", min: 0.0, max: 0.5, step: 0.01 },
+      { key: "consolidation_gain", label: "types.decayParam.consolidation_gain", group: "reinforcement", min: 0.0, max: 1.0, step: 0.05 },
     ],
   },
   {
-    label: "Soft-Floor",
+    label: "types.decayParamGroup.soft_floor",
     group: "soft_floor",
     params: [
-      { key: "floor_min", label: "바닥 최소값", group: "soft_floor", min: 0.0, max: 0.2, step: 0.01 },
-      { key: "floor_max", label: "바닥 최대값", group: "soft_floor", min: 0.1, max: 0.5, step: 0.01 },
-      { key: "floor_power", label: "바닥 지수", group: "soft_floor", min: 0.5, max: 5.0, step: 0.1 },
-      { key: "gate_center", label: "게이트 중심", group: "soft_floor", min: 0.0, max: 1.0, step: 0.05 },
-      { key: "gate_width", label: "게이트 폭", group: "soft_floor", min: 0.01, max: 0.5, step: 0.01 },
-      { key: "min_rate_scale", label: "최소 비율 스케일", group: "soft_floor", min: 0.0, max: 0.5, step: 0.01 },
+      { key: "floor_min", label: "types.decayParam.floor_min", group: "soft_floor", min: 0.0, max: 0.2, step: 0.01 },
+      { key: "floor_max", label: "types.decayParam.floor_max", group: "soft_floor", min: 0.1, max: 0.5, step: 0.01 },
+      { key: "floor_power", label: "types.decayParam.floor_power", group: "soft_floor", min: 0.5, max: 5.0, step: 0.1 },
+      { key: "gate_center", label: "types.decayParam.gate_center", group: "soft_floor", min: 0.0, max: 1.0, step: 0.05 },
+      { key: "gate_width", label: "types.decayParam.gate_width", group: "soft_floor", min: 0.01, max: 0.5, step: 0.01 },
+      { key: "min_rate_scale", label: "types.decayParam.min_rate_scale", group: "soft_floor", min: 0.0, max: 0.5, step: 0.01 },
     ],
   },
 ]

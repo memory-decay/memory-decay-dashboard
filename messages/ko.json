@@ -1,16 +1,80 @@
 {
-  "common": {
-    "dashboard": "대시보드",
-    "search": "검색",
-    "analytics": "분석",
-    "settings": "설정"
-  },
-  "memory": {
-    "title": "메모리",
+  "types": {
     "freshness": {
-      "fresh": "신선함",
-      "stale": "오래된",
-      "expired": "만료"
+      "fresh": "신선",
+      "normal": "보통",
+      "stale": "소멸 위험"
+    },
+    "memoryType": {
+      "fact": "사실",
+      "episode": "에피소드",
+      "decision": "결정",
+      "preference": "선호"
+    },
+    "decayParamGroup": {
+      "basic": "기본 감쇠",
+      "stability": "안정성",
+      "reinforcement": "강화",
+      "soft_floor": "Soft-Floor"
+    },
+    "decayParam": {
+      "lambda_fact": "사실 감쇠율 (λ_fact)",
+      "lambda_episode": "에피소드 감쇠율 (λ_episode)",
+      "alpha": "임팩트 가중치 (α)",
+      "stability_weight": "안정성 가중치 (ρ)",
+      "stability_decay": "안정성 감쇠",
+      "stability_cap": "안정성 상한",
+      "reinforcement_gain_direct": "직접 강화 게인",
+      "reinforcement_gain_assoc": "연관 강화 게인",
+      "consolidation_gain": "통합 게인",
+      "floor_min": "바닥 최소값",
+      "floor_max": "바닥 최대값",
+      "floor_power": "바닥 지수",
+      "gate_center": "게이트 중심",
+      "gate_width": "게이트 폭",
+      "min_rate_scale": "최소 비율 스케일"
     }
+  },
+  "table": {
+    "sortField": {
+      "importance": "중요도",
+      "retrieval_score": "활성도",
+      "created_tick": "생성 틱",
+      "category": "카테고리",
+      "storage_score": "저장 점수"
+    },
+    "type": "유형",
+    "status": "상태",
+    "content": "내용"
+  },
+  "stats": {
+    "totalMemories": "전체 메모리",
+    "currentTick": "현재 틱",
+    "fact": "사실",
+    "episode": "에피소드",
+    "decision": "결정",
+    "preference": "선호"
+  },
+  "paramEditor": {
+    "confirmChange": "감쇠 파라미터를 변경하면 모든 메모리의 감쇠 동작에 즉시 영향을 줍니다. 저장하시겠습니까?",
+    "saveSuccess": "저장되었습니다.",
+    "saveError": "서버에 연결할 수 없습니다.",
+    "loading": "파라미터 불러오는 중...",
+    "saving": "저장 중...",
+    "save": "저장",
+    "revert": "되돌리기",
+    "resetDefaults": "기본값 복원",
+    "changed": "변경됨"
+  },
+  "sidebar": {
+    "nav": {
+      "dashboard": "대시보드",
+      "search": "검색",
+      "analytics": "분석",
+      "graph": "연관 그래프",
+      "admin": "관리"
+    },
+    "subtitle": "관리 대시보드",
+    "serverStatus": "서버 상태"
   }
 }
