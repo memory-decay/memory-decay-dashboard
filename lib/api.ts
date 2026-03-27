@@ -27,7 +27,12 @@ export async function getHealth(): Promise<HealthStatus> {
 }
 
 export async function getStats(): Promise<SystemStats> {
-  return await apiFetch<SystemStats>("/stats")
+  const data = await apiFetch<{ num_memories: number; current_tick: number; last_tick_time: number }>("/stats")
+  return {
+    num_memories: data.num_memories,
+    current_tick: data.current_tick,
+    last_tick_time: new Date(data.last_tick_time * 1000).toISOString(),
+  }
 }
 
 // ── Search ──────────────────────────────────────────────────
@@ -83,7 +88,7 @@ export async function resetMemories(): Promise<{ status: string; cleared: number
 export async function getAllMemories(): Promise<Memory[]> {
   const data = await apiFetch<{ results: Memory[] }>("/search", {
     method: "POST",
-    body: JSON.stringify({ query: "", top_k: 200 }),
+    body: JSON.stringify({ query: "", top_k: 50 }),
   })
   return data.results
 }
