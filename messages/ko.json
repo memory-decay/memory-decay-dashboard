@@ -9,7 +9,7 @@
     "title": "메모리",
     "freshness": {
       "fresh": "신선함",
-      "stale": "陈旧",
+      "stale": "오래된",
       "expired": "만료"
     }
   }
