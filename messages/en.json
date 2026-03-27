@@ -1,16 +1,80 @@
 {
-  "common": {
-    "dashboard": "Dashboard",
-    "search": "Search",
-    "analytics": "Analytics",
-    "settings": "Settings"
-  },
-  "memory": {
-    "title": "Memory",
+  "types": {
     "freshness": {
       "fresh": "Fresh",
-      "stale": "Stale",
-      "expired": "Expired"
+      "normal": "Normal",
+      "stale": "Stale"
+    },
+    "memoryType": {
+      "fact": "Fact",
+      "episode": "Episode",
+      "decision": "Decision",
+      "preference": "Preference"
+    },
+    "decayParamGroup": {
+      "basic": "Basic Decay",
+      "stability": "Stability",
+      "reinforcement": "Reinforcement",
+      "soft_floor": "Soft-Floor"
+    },
+    "decayParam": {
+      "lambda_fact": "Fact Decay Rate (λ_fact)",
+      "lambda_episode": "Episode Decay Rate (λ_episode)",
+      "alpha": "Impact Weight (α)",
+      "stability_weight": "Stability Weight (ρ)",
+      "stability_decay": "Stability Decay",
+      "stability_cap": "Stability Cap",
+      "reinforcement_gain_direct": "Direct Reinforcement Gain",
+      "reinforcement_gain_assoc": "Associative Reinforcement Gain",
+      "consolidation_gain": "Consolidation Gain",
+      "floor_min": "Floor Minimum",
+      "floor_max": "Floor Maximum",
+      "floor_power": "Floor Power",
+      "gate_center": "Gate Center",
+      "gate_width": "Gate Width",
+      "min_rate_scale": "Minimum Rate Scale"
     }
+  },
+  "table": {
+    "sortField": {
+      "importance": "Importance",
+      "retrieval_score": "Retrieval Score",
+      "created_tick": "Created Tick",
+      "category": "Category",
+      "storage_score": "Storage Score"
+    },
+    "type": "Type",
+    "status": "Status",
+    "content": "Content"
+  },
+  "stats": {
+    "totalMemories": "Total Memories",
+    "currentTick": "Current Tick",
+    "fact": "Fact",
+    "episode": "Episode",
+    "decision": "Decision",
+    "preference": "Preference"
+  },
+  "paramEditor": {
+    "confirmChange": "Changing decay parameters will immediately affect the decay behavior of all memories. Save?",
+    "saveSuccess": "Saved.",
+    "saveError": "Cannot connect to server.",
+    "loading": "Loading parameters...",
+    "saving": "Saving...",
+    "save": "Save",
+    "revert": "Revert",
+    "resetDefaults": "Reset to Defaults",
+    "changed": "Changed"
+  },
+  "sidebar": {
+    "nav": {
+      "dashboard": "Dashboard",
+      "search": "Search",
+      "analytics": "Analytics",
+      "graph": "Association Graph",
+      "admin": "Admin"
+    },
+    "subtitle": "Admin Dashboard",
+    "serverStatus": "Server Status"
   }
 }
