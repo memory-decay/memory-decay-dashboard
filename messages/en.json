@@ -76,5 +76,9 @@
     },
     "subtitle": "Admin Dashboard",
     "serverStatus": "Server Status"
+  },
+  "languageSwitcher": {
+    "ko": "한국어",
+    "en": "English"
   }
 }

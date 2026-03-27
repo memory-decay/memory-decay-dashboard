@@ -76,5 +76,9 @@
     },
     "subtitle": "관리 대시보드",
     "serverStatus": "서버 상태"
+  },
+  "languageSwitcher": {
+    "ko": "한국어",
+    "en": "English"
   }
 }

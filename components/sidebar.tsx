@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useTranslations } from "next-intl"
+import LanguageSwitcher from "./language-switcher"
 
 interface NavItem {
   href: string
@@ -55,6 +56,11 @@ export default function Sidebar() {
           )
         })}
       </nav>
+
+      {/* Language Switcher */}
+      <div className="border-t border-border px-4 py-3">
+        <LanguageSwitcher />
+      </div>
 
       {/* Server status */}
       <div className="border-t border-border px-4 py-3">
