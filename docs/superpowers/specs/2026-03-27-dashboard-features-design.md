@@ -1,7 +1,7 @@
 # Dashboard Feature Expansion Design
 
 **Date:** 2026-03-27
-**Status:** Approved (pending spec review)
+**Status:** In review
 **Target user:** AI agent operator monitoring production memory state
 **Approach:** Hybrid — integrate into existing pages + one new dedicated page
 
@@ -15,7 +15,32 @@ The dashboard currently provides basic CRUD views (list, search, detail, analyti
 2. No way to tune decay parameters from the dashboard (hardcoded config table)
 3. No visualization of memory association networks
 
-All three have working backend APIs already.
+### Backend Prerequisites
+
+Some features require backend endpoints that don't exist yet. These must be added to `memory-decay-core` first:
+
+**Required new endpoints:**
+- `GET /admin/decay-params` — Return current DecayEngine parameters
+- `PUT /admin/decay-params` — Update parameters (partial update supported)
+- `GET /admin/tick-interval` — Return current tick interval in seconds
+- `PUT /admin/tick-interval` — Update tick interval
+- `GET /admin/history/summary` — Aggregated activation history (time-series)
+- `GET /admin/memories/{id}/history` — Per-memory activation history
+
+**Existing endpoints used as-is:**
+- `GET /admin/memories` — Paginated memory listing (already exists)
+- `GET /admin/memories/{id}` — Single memory detail (already exists)
+
+### Field Name Mapping
+
+Backend and frontend use different field names. The API layer (`lib/api.ts`) handles mapping:
+
+| Backend field | Frontend field | Notes |
+|--------------|---------------|-------|
+| `content` | `text` | Memory content text |
+| `stability_score` | `stability` | Memory stability |
+| `last_activated_tick` | — | Not currently used |
+| `retrieval_count` | — | Not currently used |
 
 ---
 
@@ -54,22 +79,43 @@ getMemoryHistory(id: string): Promise<ActivationRecord[]>
 ### New Types (`lib/types.ts`)
 
 ```ts
+// Matches backend GET /admin/history/summary response
 interface HistorySummary {
-  ticks: number[]
-  avg_retrieval: number[]
-  avg_storage: number[]
-  at_risk_count: number[]
-  by_category: Record<string, { ticks: number[]; avg_retrieval: number[] }>
+  total_memories: number
+  current_tick: number
+  categories: {
+    category: string
+    count: number
+    avg_retrieval: number
+    avg_storage: number
+    avg_stability: number
+  }[]
+  // Time-series data (backend to aggregate from activation_history table)
+  timeline: {
+    tick: number
+    avg_retrieval: number
+    avg_storage: number
+    avg_stability: number
+    at_risk_count: number
+  }[]
 }
 
+// Matches backend GET /admin/memories/{id}/history response
 interface ActivationRecord {
   tick: number
   retrieval_score: number
   storage_score: number
   stability: number
-  recorded_at: number
+  recorded_at: number  // Unix timestamp
 }
 ```
+
+### Data Transformation
+
+The `api.ts` layer transforms backend responses:
+- `categories` array → grouped per-category charts
+- `timeline` array → line chart data for system overview
+- Field names mapped (`stability_score` → `stability` where needed)
 
 ---
 
@@ -82,6 +128,7 @@ interface ActivationRecord {
 ### Admin Page Changes
 
 **Decay Parameters** (replaces static table):
+- **Backend prerequisite:** `GET /admin/decay-params` and `PUT /admin/decay-params` must be added to `memory-decay-core`
 - Fetch current params from `GET /admin/decay-params`
 - Editable form with grouped sections:
 
