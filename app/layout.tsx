@@ -1,9 +1,9 @@
 import { redirect } from 'next/navigation';
 
 export default function RootLayout({
-  children,
+  _children,
 }: {
-  children: React.ReactNode;
+  _children: React.ReactNode;
 }) {
   redirect('/ko');
 }

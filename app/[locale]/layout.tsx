@@ -22,12 +22,12 @@ export default async function LocaleLayout({
   return (
     <html lang={locale}>
       <body>
-        <Sidebar />
-        <main className="ml-56 min-h-screen p-6">
-          <NextIntlClientProvider messages={messages}>
+        <NextIntlClientProvider messages={messages}>
+          <Sidebar />
+          <main className="ml-56 min-h-screen p-6">
             {children}
-          </NextIntlClientProvider>
-        </main>
+          </main>
+        </NextIntlClientProvider>
       </body>
     </html>
   );
