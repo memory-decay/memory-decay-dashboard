@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl"
 
 export default function ParamEditor() {
   const t = useTranslations('paramEditor')
+  const tTypes = useTranslations('types')
   const [params, setParams] = useState<DecayParams>({ ...DEFAULT_DECAY_PARAMS })
   const [saved, setSaved] = useState<DecayParams>({ ...DEFAULT_DECAY_PARAMS })
   const [loading, setLoading] = useState(true)

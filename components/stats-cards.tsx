@@ -20,6 +20,7 @@ const STAT_KEYS = [
 
 export default function StatsCards({ stats, memories }: StatsCardsProps) {
   const t = useTranslations('stats')
+  const tTypes = useTranslations('types')
 
   const factCount = memories.filter(m => m.mtype === "fact").length
   const episodeCount = memories.filter(m => m.mtype === "episode").length
