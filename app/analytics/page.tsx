@@ -7,7 +7,6 @@ import {
 } from "recharts"
 import { getAllMemories, getHistorySummary } from "@/lib/api"
 import { Memory, HistorySummary, getFreshnessStatus, MTYPE_LABELS, CHART_TOOLTIP_STYLE } from "@/lib/types"
-import { MOCK_MEMORIES } from "@/lib/mock-data"
 import Link from "next/link"
 import StatusBadge from "@/components/status-badge"
 
@@ -35,7 +34,7 @@ function buildCategoryCounts(memories: Memory[]): { name: string; value: number 
 }
 
 export default function AnalyticsPage() {
-  const [memories, setMemories] = useState<Memory[]>(MOCK_MEMORIES)
+  const [memories, setMemories] = useState<Memory[]>([])
   const [history, setHistory] = useState<HistorySummary | null>(null)
   const [loading, setLoading] = useState(true)
 

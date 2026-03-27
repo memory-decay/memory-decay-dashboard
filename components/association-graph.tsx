@@ -1,9 +1,9 @@
 "use client"
 
-import { useRef, useEffect, useState, useCallback } from "react"
+import { useRef, useEffect, useState, useCallback, useMemo } from "react"
 import * as d3 from "d3"
 import Link from "next/link"
-import { Memory } from "@/lib/types"
+import { Memory, MTYPE_LABELS } from "@/lib/types"
 
 interface GraphNode extends d3.SimulationNodeDatum {
   id: string
@@ -30,13 +30,9 @@ function scoreColor(score: number): string {
   return "#f87171"
 }
 
-function mtypeLabel(mtype: string): string {
-  const map: Record<string, string> = { fact: "사실", episode: "에피소드", decision: "결정", preference: "선호" }
-  return map[mtype] || mtype
-}
-
 export default function AssociationGraph({ memories }: AssociationGraphProps) {
   const svgRef = useRef<SVGSVGElement>(null)
+  const simulationRef = useRef<d3.Simulation<GraphNode, GraphLink> | null>(null)
   const [selected, setSelected] = useState<GraphNode | null>(null)
   const [highlight, setHighlight] = useState("")
   const [threshold, setThreshold] = useState(0.0)
@@ -54,15 +50,8 @@ export default function AssociationGraph({ memories }: AssociationGraphProps) {
     })
   }, [])
 
-  useEffect(() => {
-    if (!svgRef.current || filteredMemories.length === 0) return
-
-    const svg = d3.select(svgRef.current)
-    const width = svgRef.current.clientWidth
-    const height = 500
-
-    svg.selectAll("*").remove()
-
+  // Build graph data (nodes + links) from filtered memories
+  const graphData = useMemo(() => {
     const nodeMap = new Map<string, GraphNode>()
     const nodes: GraphNode[] = []
     const links: GraphLink[] = []
@@ -83,6 +72,26 @@ export default function AssociationGraph({ memories }: AssociationGraphProps) {
         }
       }
     }
+    return { nodes, links }
+  }, [filteredMemories])
+
+  // Stable key for detecting when the node set actually changes
+  const nodeSetKey = filteredMemories.map(m => m.id).sort().join(",")
+
+  // Main simulation effect — only rebuilds when node set changes
+  useEffect(() => {
+    if (!svgRef.current || graphData.nodes.length === 0) return
+
+    // Stop previous simulation if any
+    simulationRef.current?.stop()
+
+    const svg = d3.select(svgRef.current)
+    const width = svgRef.current.clientWidth
+    const height = 500
+
+    svg.selectAll("*").remove()
+
+    const { nodes, links } = graphData
 
     const simulation = d3.forceSimulation<GraphNode>(nodes)
       .force("link", d3.forceLink<GraphNode, GraphLink>(links).id((d: GraphNode) => d.id).distance(80))
@@ -90,7 +99,9 @@ export default function AssociationGraph({ memories }: AssociationGraphProps) {
       .force("center", d3.forceCenter(width / 2, height / 2))
       .force("collision", d3.forceCollide<GraphNode>().radius((d: GraphNode) => 6 + d.importance * 10))
 
-    const link = svg.append("g")
+    simulationRef.current = simulation
+
+    const linkSel = svg.append("g")
       .selectAll("line")
       .data(links)
       .join("line")
@@ -98,7 +109,7 @@ export default function AssociationGraph({ memories }: AssociationGraphProps) {
       .attr("stroke-width", 1.5)
       .attr("stroke-opacity", 0.6)
 
-    const node = svg.append("g")
+    const nodeSel = svg.append("g")
       .selectAll<SVGGElement, GraphNode>("g")
       .data(nodes)
       .join("g")
@@ -117,14 +128,14 @@ export default function AssociationGraph({ memories }: AssociationGraphProps) {
         })
       )
 
-    node.append("circle")
+    nodeSel.append("circle")
       .attr("r", (d: GraphNode) => 6 + d.importance * 10)
       .attr("fill", (d: GraphNode) => scoreColor(d.retrieval_score))
       .attr("fill-opacity", 0.85)
-      .attr("stroke", (d: GraphNode) => d.id === selected?.id ? "#fff" : "none")
+      .attr("stroke", "none")
       .attr("stroke-width", 2)
 
-    node.filter((d: GraphNode) => d.importance >= 0.6)
+    nodeSel.filter((d: GraphNode) => d.importance >= 0.6)
       .append("text")
       .text((d: GraphNode) => d.text.slice(0, 12) + (d.text.length > 12 ? "..." : ""))
       .attr("dx", (d: GraphNode) => 8 + d.importance * 10)
@@ -133,50 +144,70 @@ export default function AssociationGraph({ memories }: AssociationGraphProps) {
       .attr("font-size", 9)
       .attr("pointer-events", "none")
 
-    node.on("click", (_event: MouseEvent, d: GraphNode) => {
+    nodeSel.on("click", (_event: MouseEvent, d: GraphNode) => {
       setSelected(prev => prev?.id === d.id ? null : d)
     })
 
-    node.on("mouseenter", (_event: MouseEvent, d: GraphNode) => {
-      node.attr("opacity", (n: GraphNode) => {
+    nodeSel.on("mouseenter", (_event: MouseEvent, d: GraphNode) => {
+      nodeSel.attr("opacity", (n: GraphNode) => {
         if (n.id === d.id) return 1
         return links.some(l =>
           ((l.source as GraphNode).id === d.id && (l.target as GraphNode).id === n.id) ||
           ((l.target as GraphNode).id === d.id && (l.source as GraphNode).id === n.id)
         ) ? 1 : 0.3
       })
-      link.attr("stroke-opacity", (l: GraphLink) => {
+      linkSel.attr("stroke-opacity", (l: GraphLink) => {
         const sId = (l.source as GraphNode).id
         const tId = (l.target as GraphNode).id
         return sId === d.id || tId === d.id ? 1 : 0.1
       })
     }).on("mouseleave", () => {
-      node.attr("opacity", 1)
-      link.attr("stroke-opacity", 0.6)
+      nodeSel.attr("opacity", 1)
+      linkSel.attr("stroke-opacity", 0.6)
     })
 
+    simulation.on("tick", () => {
+      linkSel
+        .attr("x1", (d: GraphLink) => (d.source as GraphNode).x || 0)
+        .attr("y1", (d: GraphLink) => (d.source as GraphNode).y || 0)
+        .attr("x2", (d: GraphLink) => (d.target as GraphNode).x || 0)
+        .attr("y2", (d: GraphLink) => (d.target as GraphNode).y || 0)
+      nodeSel.attr("transform", (d: GraphNode) => `translate(${d.x || 0},${d.y || 0})`)
+    })
+
+    return () => { simulation.stop() }
+  }, [nodeSetKey, graphData])
+
+  // Lightweight: update visual highlights without rebuilding simulation
+  useEffect(() => {
+    if (!svgRef.current) return
+    const svg = d3.select(svgRef.current)
+    const circles = svg.selectAll<SVGCircleElement, GraphNode>("circle")
+
+    if (!circles.size()) return
+
+    // Search highlight
     if (highlight) {
       const q = highlight.toLowerCase()
-      node.select("circle")
+      circles
         .attr("stroke", (d: GraphNode) =>
           d.text.toLowerCase().includes(q) || d.id.toLowerCase().includes(q) ? "#7c9cff" : "none"
         )
         .attr("stroke-width", (d: GraphNode) =>
           d.text.toLowerCase().includes(q) || d.id.toLowerCase().includes(q) ? 3 : 0
         )
+    } else {
+      circles.attr("stroke", "none").attr("stroke-width", 2)
     }
 
-    simulation.on("tick", () => {
-      link
-        .attr("x1", (d: GraphLink) => (d.source as GraphNode).x || 0)
-        .attr("y1", (d: GraphLink) => (d.source as GraphNode).y || 0)
-        .attr("x2", (d: GraphLink) => (d.target as GraphNode).x || 0)
-        .attr("y2", (d: GraphLink) => (d.target as GraphNode).y || 0)
-      node.attr("transform", (d: GraphNode) => `translate(${d.x || 0},${d.y || 0})`)
-    })
-
-    return () => { simulation.stop() }
-  }, [filteredMemories, selected?.id, highlight])
+    // Selection highlight
+    if (selected) {
+      circles.attr("stroke", (d: GraphNode) =>
+        d.id === selected.id ? "#fff" : circles.attr("stroke") === "none" ? "none" : circles.attr("stroke")
+      )
+      circles.filter((d: GraphNode) => d.id === selected.id).attr("stroke", "#fff").attr("stroke-width", 2)
+    }
+  }, [highlight, selected?.id])
 
   const edgeCount = filteredMemories.reduce(
     (sum, m) => sum + m.associations.filter(a => filteredMemories.some(f => f.id === a)).length, 0
@@ -246,7 +277,7 @@ export default function AssociationGraph({ memories }: AssociationGraphProps) {
             <p className="text-sm text-text-primary leading-relaxed">{selected.text}</p>
             <div className="space-y-1 text-xs text-text-secondary">
               <div>카테고리: <span className="text-accent">{selected.category}</span></div>
-              <div>유형: {mtypeLabel(selected.mtype)}</div>
+              <div>유형: {MTYPE_LABELS[selected.mtype] || selected.mtype}</div>
               <div>중요도: <span className="font-mono">{selected.importance.toFixed(2)}</span></div>
               <div>검색 점수: <span className="font-mono">{selected.retrieval_score.toFixed(3)}</span></div>
             </div>

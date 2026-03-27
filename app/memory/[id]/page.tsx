@@ -8,7 +8,6 @@ import {
 } from "recharts"
 import { getMemoryById, forgetMemory, advanceTick, getMemoryHistory } from "@/lib/api"
 import { Memory, ActivationRecord, getFreshnessStatus, MTYPE_LABELS, CHART_TOOLTIP_STYLE } from "@/lib/types"
-import { MOCK_MEMORIES } from "@/lib/mock-data"
 import { ticksUntilThreshold } from "@/lib/decay"
 import StatusBadge from "@/components/status-badge"
 import ScoreDisplay from "@/components/score-display"
@@ -28,7 +27,7 @@ export default function MemoryDetailPage() {
         getMemoryById(id),
         getMemoryHistory(id),
       ])
-      setMemory(m || MOCK_MEMORIES[0])
+      setMemory(m)
       setHistory(h)
       setLoading(false)
     }
