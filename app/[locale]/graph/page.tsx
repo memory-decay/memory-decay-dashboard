@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import dynamic from "next/dynamic"
 import { getAllMemories } from "@/lib/api"
 import { Memory } from "@/lib/types"
-import { MOCK_MEMORIES } from "@/lib/mock-data"
 
 const AssociationGraph = dynamic(() => import("@/components/association-graph"), {
   ssr: false,
@@ -16,7 +15,7 @@ const AssociationGraph = dynamic(() => import("@/components/association-graph"),
 })
 
 export default function GraphPage() {
-  const [memories, setMemories] = useState<Memory[]>(MOCK_MEMORIES)
+  const [memories, setMemories] = useState<Memory[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {

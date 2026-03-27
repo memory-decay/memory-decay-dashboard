@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import { useTranslations } from "next-intl"
 import { getStats, getAllMemories } from "@/lib/api"
 import { SystemStats, Memory } from "@/lib/types"
-import { MOCK_STATS, MOCK_MEMORIES } from "@/lib/mock-data"
 import StatsCards from "@/components/stats-cards"
 import TickControls from "@/components/tick-controls"
 import QuickSearch from "@/components/quick-search"
@@ -12,8 +11,8 @@ import MemoryTable from "@/components/memory-table"
 
 export default function DashboardPage() {
   const t = useTranslations('page.dashboard')
-  const [stats, setStats] = useState<SystemStats>(MOCK_STATS)
-  const [memories, setMemories] = useState<Memory[]>(MOCK_MEMORIES)
+  const [stats, setStats] = useState<SystemStats>({ num_memories: 0, current_tick: 0, last_tick_time: "" })
+  const [memories, setMemories] = useState<Memory[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
