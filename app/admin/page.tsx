@@ -1,8 +1,9 @@
 "use client"
 
-import { useState } from "react"
-import { storeMemory, resetMemories, advanceTick } from "@/lib/api"
+import { useState, useEffect } from "react"
+import { storeMemory, resetMemories, advanceTick, getTickInterval, updateTickInterval } from "@/lib/api"
 import { StoreRequest } from "@/lib/types"
+import ParamEditor from "@/components/param-editor"
 
 const MTYPE_OPTIONS = [
   { value: "fact", label: "사실" },
@@ -13,8 +14,17 @@ const MTYPE_OPTIONS = [
 
 export default function AdminPage() {
   const [tickCount, setTickCount] = useState(10)
+  const [tickInterval, setTickInterval] = useState(3600)
+  const [savedInterval, setSavedInterval] = useState(3600)
   const [status, setStatus] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    getTickInterval().then(data => {
+      setTickInterval(data.interval)
+      setSavedInterval(data.interval)
+    }).catch(() => {})
+  }, [])
 
   // New memory form
   const [newMemory, setNewMemory] = useState<StoreRequest>({
@@ -184,28 +194,45 @@ export default function AdminPage() {
         </div>
       </div>
 
-      {/* System config display */}
-      <div className="panel p-5">
-        <div className="label mb-3">시스템 설정</div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <tbody className="divide-y divide-border/50">
-              {[
-                ["API 서버", "http://localhost:8100"],
-                ["감쇠율 (λ)", "0.1"],
-                ["중요도 가중치 (α)", "0.5"],
-                ["안정성 가중치 (ρ)", "0.3"],
-                ["망각 임계값", "0.01"],
-                ["기본 검색 수 (top_k)", "10"],
-              ].map(([key, value]) => (
-                <tr key={key}>
-                  <td className="py-2 pr-4 text-text-muted">{key}</td>
-                  <td className="py-2 font-mono text-text-secondary">{value}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      {/* Tick interval */}
+      <div className="panel p-5 space-y-4">
+        <div className="label">틱 간격</div>
+        <div className="flex items-center gap-3">
+          <input
+            type="number"
+            min={60}
+            max={86400}
+            step={60}
+            value={tickInterval}
+            onChange={e => setTickInterval(Math.max(60, parseInt(e.target.value) || 60))}
+            className="input-field w-28"
+          />
+          <span className="text-sm text-text-muted">초</span>
+          <button
+            onClick={async () => {
+              try {
+                await updateTickInterval(tickInterval)
+                setSavedInterval(tickInterval)
+                setStatus(`틱 간격이 ${tickInterval}초로 변경되었습니다.`)
+              } catch {
+                setStatus("틱 간격 변경에 실패했습니다.")
+              }
+            }}
+            disabled={tickInterval === savedInterval}
+            className="btn-primary disabled:opacity-40"
+          >
+            저장
+          </button>
         </div>
+        <p className="text-xs text-text-muted">
+          현재: {savedInterval}초 ({(savedInterval / 60).toFixed(0)}분)
+        </p>
+      </div>
+
+      {/* Decay params editor */}
+      <div className="panel p-5">
+        <div className="label mb-4">감쇠 파라미터</div>
+        <ParamEditor />
       </div>
     </div>
   )

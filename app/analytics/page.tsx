@@ -2,19 +2,11 @@
 
 import { useState, useEffect } from "react"
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell, LineChart, Line, AreaChart, Area, Legend,
 } from "recharts"
-import { getAllMemories } from "@/lib/api"
-import { Memory, getFreshnessStatus } from "@/lib/types"
+import { getAllMemories, getHistorySummary } from "@/lib/api"
+import { Memory, HistorySummary, getFreshnessStatus } from "@/lib/types"
 import { MOCK_MEMORIES } from "@/lib/mock-data"
 import Link from "next/link"
 import StatusBadge from "@/components/status-badge"
@@ -49,14 +41,24 @@ function buildCategoryCounts(memories: Memory[]): { name: string; value: number 
   return Object.entries(counts).map(([name, value]) => ({ name, value }))
 }
 
+const CHART_TOOLTIP_STYLE = {
+  background: "#151821",
+  border: "1px solid #263042",
+  borderRadius: 8,
+  fontSize: 12,
+  color: "#f8fafc",
+}
+
 export default function AnalyticsPage() {
   const [memories, setMemories] = useState<Memory[]>(MOCK_MEMORIES)
+  const [history, setHistory] = useState<HistorySummary | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function load() {
-      const m = await getAllMemories()
+      const [m, h] = await Promise.all([getAllMemories(), getHistorySummary()])
       setMemories(m)
+      setHistory(h)
       setLoading(false)
     }
     load()
@@ -76,6 +78,67 @@ export default function AnalyticsPage() {
         {loading && <span className="text-xs text-text-muted ml-2">불러오는 중...</span>}
       </div>
 
+      {/* ── Time-Series: System Timeline ──────────────────────── */}
+      {history && history.timeline.length > 0 && (
+        <div className="grid gap-6 lg:grid-cols-2">
+          {/* Average activation over time */}
+          <div className="chart-section">
+            <div className="label mb-3">시스템 활성도 추이</div>
+            <ResponsiveContainer width="100%" height={260}>
+              <LineChart data={history.timeline} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#263042" />
+                <XAxis dataKey="tick" stroke="#70809c" fontSize={10} tickLine={false} />
+                <YAxis stroke="#70809c" fontSize={11} tickLine={false} domain={[0, 1]} />
+                <Tooltip contentStyle={CHART_TOOLTIP_STYLE} />
+                <Legend wrapperStyle={{ fontSize: 11, color: "#70809c" }} />
+                <Line type="monotone" dataKey="avg_retrieval" stroke="#7c9cff" strokeWidth={2} dot={false} name="검색 평균" />
+                <Line type="monotone" dataKey="avg_storage" stroke="#49dcb1" strokeWidth={2} dot={false} name="저장 평균" />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* At-risk count over time */}
+          <div className="chart-section">
+            <div className="label mb-3">소멸 위험 메모리 수 추이</div>
+            <ResponsiveContainer width="100%" height={260}>
+              <AreaChart data={history.timeline} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#263042" />
+                <XAxis dataKey="tick" stroke="#70809c" fontSize={10} tickLine={false} />
+                <YAxis stroke="#70809c" fontSize={11} tickLine={false} allowDecimals={false} />
+                <Tooltip contentStyle={CHART_TOOLTIP_STYLE} />
+                <Area
+                  type="monotone" dataKey="at_risk_count" stroke="#f87171" fill="#f8717120"
+                  strokeWidth={2} name="위험 메모리 수"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
+
+      {/* ── Per-category decay comparison ─────────────────────── */}
+      {history && history.categories.length > 0 && (
+        <div className="chart-section">
+          <div className="label mb-3">카테고리별 활성도 비교</div>
+          <ResponsiveContainer width="100%" height={280}>
+            <BarChart
+              data={history.categories}
+              margin={{ top: 5, right: 10, left: 0, bottom: 5 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="#263042" />
+              <XAxis dataKey="category" stroke="#70809c" fontSize={10} tickLine={false} />
+              <YAxis stroke="#70809c" fontSize={11} tickLine={false} domain={[0, 1]} />
+              <Tooltip contentStyle={CHART_TOOLTIP_STYLE} />
+              <Legend wrapperStyle={{ fontSize: 11, color: "#70809c" }} />
+              <Bar dataKey="avg_retrieval" fill="#7c9cff" radius={[3, 3, 0, 0]} name="검색 점수" />
+              <Bar dataKey="avg_storage" fill="#49dcb1" radius={[3, 3, 0, 0]} name="저장 점수" />
+              <Bar dataKey="avg_stability" fill="#f5a65b" radius={[3, 3, 0, 0]} name="안정성" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+
+      {/* ── Original charts ──────────────────────────────────── */}
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Activation score histogram */}
         <div className="chart-section">
@@ -85,15 +148,7 @@ export default function AnalyticsPage() {
               <CartesianGrid strokeDasharray="3 3" stroke="#263042" />
               <XAxis dataKey="range" stroke="#70809c" fontSize={10} tickLine={false} />
               <YAxis stroke="#70809c" fontSize={11} tickLine={false} allowDecimals={false} />
-              <Tooltip
-                contentStyle={{
-                  background: "#151821",
-                  border: "1px solid #263042",
-                  borderRadius: 8,
-                  fontSize: 12,
-                  color: "#f8fafc",
-                }}
-              />
+              <Tooltip contentStyle={CHART_TOOLTIP_STYLE} />
               <Bar dataKey="count" fill="#7c9cff" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
@@ -106,27 +161,14 @@ export default function AnalyticsPage() {
             <ResponsiveContainer width="50%" height={260}>
               <PieChart>
                 <Pie
-                  data={categoryData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={50}
-                  outerRadius={90}
-                  paddingAngle={3}
-                  dataKey="value"
+                  data={categoryData} cx="50%" cy="50%" innerRadius={50} outerRadius={90}
+                  paddingAngle={3} dataKey="value"
                 >
                   {categoryData.map((_, i) => (
                     <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip
-                  contentStyle={{
-                    background: "#151821",
-                    border: "1px solid #263042",
-                    borderRadius: 8,
-                    fontSize: 12,
-                    color: "#f8fafc",
-                  }}
-                />
+                <Tooltip contentStyle={CHART_TOOLTIP_STYLE} />
               </PieChart>
             </ResponsiveContainer>
             <div className="space-y-2">
@@ -166,14 +208,6 @@ export default function AnalyticsPage() {
               <StatusBadge status={getFreshnessStatus(m.freshness)} />
             </Link>
           ))}
-        </div>
-      </div>
-
-      {/* Tick history placeholder */}
-      <div className="panel p-5">
-        <div className="label mb-3">틱 히스토리</div>
-        <div className="flex items-center justify-center h-32 text-text-muted text-sm">
-          백엔드 히스토리 API가 추가되면 타임라인이 표시됩니다.
         </div>
       </div>
     </div>

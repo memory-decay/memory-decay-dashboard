@@ -13,6 +13,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/", label: "대시보드", icon: "⊞" },
   { href: "/search", label: "검색", icon: "⊘" },
   { href: "/analytics", label: "분석", icon: "⊡" },
+  { href: "/graph", label: "연관 그래프", icon: "⊛" },
   { href: "/admin", label: "관리", icon: "⊛" },
 ]
 

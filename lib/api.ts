@@ -1,4 +1,8 @@
-import { Memory, SearchResult, SystemStats, HealthStatus, StoreRequest, StoreResponse, TickResponse } from "./types"
+import {
+  Memory, SearchResult, SystemStats, HealthStatus, StoreRequest,
+  StoreResponse, TickResponse, HistorySummary, HistoryTimelinePoint,
+  ActivationRecord, DecayParams, DEFAULT_DECAY_PARAMS,
+} from "./types"
 import { MOCK_MEMORIES, MOCK_STATS } from "./mock-data"
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8100"
@@ -112,4 +116,120 @@ export async function getMemoryById(id: string): Promise<Memory | null> {
   } catch {
     return MOCK_MEMORIES.find(m => m.id === id) || null
   }
+}
+
+// ── Time-Series (Feature 1) ──────────────────────────────────
+
+export async function getHistorySummary(): Promise<HistorySummary> {
+  try {
+    return await apiFetch<HistorySummary>("/admin/history/summary")
+  } catch {
+    // Mock fallback: generate synthetic timeline from mock data
+    return generateMockHistorySummary()
+  }
+}
+
+export async function getMemoryHistory(id: string): Promise<ActivationRecord[]> {
+  try {
+    return await apiFetch<ActivationRecord[]>(`/admin/memories/${id}/history`)
+  } catch {
+    // Mock fallback: simulate decay history for a memory
+    const mem = MOCK_MEMORIES.find(m => m.id === id)
+    return mem ? generateMockHistory(mem) : []
+  }
+}
+
+// ── Decay Params (Feature 2) ────────────────────────────────
+
+export async function getDecayParams(): Promise<DecayParams> {
+  try {
+    return await apiFetch<DecayParams>("/admin/decay-params")
+  } catch {
+    return { ...DEFAULT_DECAY_PARAMS }
+  }
+}
+
+export async function updateDecayParams(params: Partial<DecayParams>): Promise<DecayParams> {
+  return apiFetch<DecayParams>("/admin/decay-params", {
+    method: "PUT",
+    body: JSON.stringify(params),
+  })
+}
+
+export async function getTickInterval(): Promise<{ interval: number }> {
+  try {
+    return await apiFetch<{ interval: number }>("/admin/tick-interval")
+  } catch {
+    return { interval: 3600 }
+  }
+}
+
+export async function updateTickInterval(seconds: number): Promise<{ interval: number }> {
+  return apiFetch<{ interval: number }>("/admin/tick-interval", {
+    method: "PUT",
+    body: JSON.stringify({ interval: seconds }),
+  })
+}
+
+// ── Mock Generators ──────────────────────────────────────────
+
+function generateMockHistorySummary(): HistorySummary {
+  const memories = MOCK_MEMORIES
+  const currentTick = MOCK_STATS.current_tick
+  const ticks = 20
+  const timeline: HistoryTimelinePoint[] = []
+
+  for (let t = currentTick - ticks; t <= currentTick; t++) {
+    const progress = (t - (currentTick - ticks)) / ticks
+    timeline.push({
+      tick: t,
+      avg_retrieval: 0.7 - progress * 0.35 + (Math.random() * 0.04 - 0.02),
+      avg_storage: 0.75 - progress * 0.3 + (Math.random() * 0.03 - 0.015),
+      avg_stability: 0.2 + progress * 0.15 + (Math.random() * 0.02 - 0.01),
+      at_risk_count: Math.floor(progress * memories.length * 0.4),
+    })
+  }
+
+  const catMap: Record<string, { count: number; rSum: number; sSum: number; stSum: number }> = {}
+  for (const m of memories) {
+    if (!catMap[m.category]) catMap[m.category] = { count: 0, rSum: 0, sSum: 0, stSum: 0 }
+    catMap[m.category].count++
+    catMap[m.category].rSum += m.retrieval_score
+    catMap[m.category].sSum += m.storage_score
+    catMap[m.category].stSum += m.stability
+  }
+
+  return {
+    total_memories: memories.length,
+    current_tick: currentTick,
+    categories: Object.entries(catMap).map(([category, v]) => ({
+      category,
+      count: v.count,
+      avg_retrieval: v.rSum / v.count,
+      avg_storage: v.sSum / v.count,
+      avg_stability: v.stSum / v.count,
+    })),
+    timeline,
+  }
+}
+
+function generateMockHistory(mem: Memory): ActivationRecord[] {
+  const records: ActivationRecord[] = []
+  const totalTicks = 20
+  const startTick = Math.max(0, mem.created_tick)
+  const now = Date.now()
+
+  for (let i = 0; i <= totalTicks; i++) {
+    const tick = startTick + i
+    const progress = i / totalTicks
+    const decay = mem.retrieval_score * Math.exp(-progress * 0.05)
+    records.push({
+      tick,
+      retrieval_score: Math.max(0.01, decay),
+      storage_score: Math.max(0.01, mem.storage_score * Math.exp(-progress * 0.03)),
+      stability: Math.min(mem.stability + progress * 0.1, 1.0),
+      recorded_at: now - (totalTicks - i) * 3600_000,
+    })
+  }
+  return records
 }
