@@ -1,0 +1,16 @@
+{
+  "common": {
+    "dashboard": "Dashboard",
+    "search": "Search",
+    "analytics": "Analytics",
+    "settings": "Settings"
+  },
+  "memory": {
+    "title": "Memory",
+    "freshness": {
+      "fresh": "Fresh",
+      "stale": "Stale",
+      "expired": "Expired"
+    }
+  }
+}

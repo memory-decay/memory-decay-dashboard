@@ -1,0 +1,16 @@
+{
+  "common": {
+    "dashboard": "대시보드",
+    "search": "검색",
+    "analytics": "분석",
+    "settings": "설정"
+  },
+  "memory": {
+    "title": "메모리",
+    "freshness": {
+      "fresh": "신선함",
+      "stale": "陈旧",
+      "expired": "만료"
+    }
+  }
+}
