@@ -71,10 +71,20 @@ Backend and frontend use different field names. The API layer (`lib/api.ts`) han
 
 ### New API Functions (`lib/api.ts`)
 
+All new functions follow the existing `api.ts` pattern: try real API, catch → return mock fallback.
+
 ```ts
-getHistorySummary(): Promise<HistorySummary>
-getMemoryHistory(id: string): Promise<ActivationRecord[]>
+getHistorySummary(): Promise<HistorySummary>    // fallback: generate from MOCK_MEMORIES
+getMemoryHistory(id: string): Promise<ActivationRecord[]>  // fallback: simulate decay curve from memory scores
 ```
+
+### Mock Fallback Strategy
+
+When backend endpoints don't exist yet (or server is offline), each new function provides a local fallback:
+- `getHistorySummary`: generate synthetic timeline by running `soft_floor_decay_step` on mock data for N ticks
+- `getMemoryHistory`: simulate activation history using `ticksUntilThreshold` + decay utility
+- `getDecayParams`: return hardcoded defaults matching backend's `DecayEngine._params`
+- `getTickInterval`: return `{ interval: 3600 }`
 
 ### New Types (`lib/types.ts`)
 
@@ -236,8 +246,12 @@ interface DecayParams {
 - Dynamic import (`next/dynamic` + `ssr: false`) since D3 needs browser APIs
 - Virtualization not needed for typical memory counts (hundreds, not thousands)
 
-### Sidebar Change
-- Add "연관 그래프" item between "분석" and "관리"
+### Sidebar Change (`components/sidebar.tsx`)
+
+Current items: `["대시보드", "검색", "분석", "관리"]`
+New items: `["대시보드", "검색", "분석", "연관 그래프", "관리"]`
+
+Add `연관 그래프` with `/graph` route between "분석" (`/analytics`) and "관리" (`/admin`).
 
 ### New Files
 - `app/graph/page.tsx` — page wrapper
