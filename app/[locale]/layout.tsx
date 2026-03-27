@@ -2,6 +2,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import Sidebar from '@/components/sidebar';
+import { locales } from '@/lib/i18n';
 import '../globals.css';
 
 export default async function LocaleLayout({
@@ -13,7 +14,7 @@ export default async function LocaleLayout({
 }) {
   const { locale } = await params;
 
-  if (!['ko', 'en'].includes(locale)) {
+  if (!locales.includes(locale as typeof locales[number])) {
     notFound();
   }
 

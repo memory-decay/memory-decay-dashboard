@@ -80,5 +80,32 @@
   "languageSwitcher": {
     "ko": "한국어",
     "en": "English"
+  },
+  "page": {
+    "dashboard": {
+      "title": "Dashboard",
+      "subtitle": "AI Agent Memory Decay Status",
+      "recentMemories": "Recent Memories",
+      "loading": "Loading..."
+    },
+    "analytics": {
+      "title": "Analytics",
+      "subtitle": "Memory Decay Analysis and Statistics",
+      "loading": "Loading...",
+      "systemActivationTrend": "System Activation Trend",
+      "avgRetrieval": "Avg Retrieval",
+      "avgStorage": "Avg Storage",
+      "atRiskTrend": "At-Risk Memory Count Trend",
+      "atRiskCount": "At-Risk Count",
+      "categoryComparison": "Category Activation Comparison",
+      "retrievalScore": "Retrieval Score",
+      "storageScore": "Storage Score",
+      "stability": "Stability",
+      "activationDistribution": "Activation Distribution",
+      "typeBreakdown": "Type Breakdown",
+      "atRiskMemories": "At-Risk Memories",
+      "atRiskDescription": "Memories with lowest storage scores (may be forgotten soon)",
+      "storage": "Storage"
+    }
   }
 }

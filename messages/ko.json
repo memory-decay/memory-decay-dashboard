@@ -80,5 +80,32 @@
   "languageSwitcher": {
     "ko": "한국어",
     "en": "English"
+  },
+  "page": {
+    "dashboard": {
+      "title": "대시보드",
+      "subtitle": "AI 에이전트 메모리 감쇠 현황",
+      "recentMemories": "최근 메모리",
+      "loading": "불러오는 중..."
+    },
+    "analytics": {
+      "title": "분석",
+      "subtitle": "메모리 감쇠 분석 및 통계",
+      "loading": "불러오는 중...",
+      "systemActivationTrend": "시스템 활성도 추이",
+      "avgRetrieval": "검색 평균",
+      "avgStorage": "저장 평균",
+      "atRiskTrend": "소멸 위험 메모리 수 추이",
+      "atRiskCount": "위험 메모리 수",
+      "categoryComparison": "카테고리별 활성도 비교",
+      "retrievalScore": "검색 점수",
+      "storageScore": "저장 점수",
+      "stability": "안정성",
+      "activationDistribution": "활성도 분포",
+      "typeBreakdown": "유형별 분류",
+      "atRiskMemories": "소멸 위험 메모리",
+      "atRiskDescription": "저장 점수가 가장 낮은 메모리 (곧 잊혀질 수 있음)",
+      "storage": "저장"
+    }
   }
 }
