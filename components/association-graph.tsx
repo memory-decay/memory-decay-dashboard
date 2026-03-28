@@ -4,6 +4,7 @@ import { useRef, useEffect, useState, useCallback, useMemo } from "react"
 import * as d3 from "d3"
 import Link from "next/link"
 import { Memory, MTYPE_LABELS } from "@/lib/types"
+import { useChartColors, getScoreColor } from "@/lib/theme-colors"
 import { useTranslations } from "next-intl"
 
 interface GraphNode extends d3.SimulationNodeDatum {
@@ -25,14 +26,9 @@ interface AssociationGraphProps {
   memories: Memory[]
 }
 
-function scoreColor(score: number): string {
-  if (score >= 0.7) return "#49dcb1"
-  if (score >= 0.4) return "#f5a65b"
-  return "#f87171"
-}
-
 export default function AssociationGraph({ memories }: AssociationGraphProps) {
   const t = useTranslations('search')
+  const colors = useChartColors()
   const svgRef = useRef<SVGSVGElement>(null)
   const simulationRef = useRef<d3.Simulation<GraphNode, GraphLink> | null>(null)
   const [selected, setSelected] = useState<GraphNode | null>(null)
@@ -107,7 +103,7 @@ export default function AssociationGraph({ memories }: AssociationGraphProps) {
       .selectAll("line")
       .data(links)
       .join("line")
-      .attr("stroke", "#263042")
+      .attr("stroke", colors.border)
       .attr("stroke-width", 1.5)
       .attr("stroke-opacity", 0.6)
 
@@ -132,7 +128,7 @@ export default function AssociationGraph({ memories }: AssociationGraphProps) {
 
     nodeSel.append("circle")
       .attr("r", (d: GraphNode) => 6 + d.importance * 10)
-      .attr("fill", (d: GraphNode) => scoreColor(d.retrieval_score))
+      .attr("fill", (d: GraphNode) => getScoreColor(d.retrieval_score, colors))
       .attr("fill-opacity", 0.85)
       .attr("stroke", "none")
       .attr("stroke-width", 2)
@@ -142,7 +138,7 @@ export default function AssociationGraph({ memories }: AssociationGraphProps) {
       .text((d: GraphNode) => d.text.slice(0, 12) + (d.text.length > 12 ? "..." : ""))
       .attr("dx", (d: GraphNode) => 8 + d.importance * 10)
       .attr("dy", 4)
-      .attr("fill", "#94a3b8")
+      .attr("fill", colors.textMuted)
       .attr("font-size", 9)
       .attr("pointer-events", "none")
 
@@ -178,7 +174,7 @@ export default function AssociationGraph({ memories }: AssociationGraphProps) {
     })
 
     return () => { simulation.stop() }
-  }, [nodeSetKey, graphData])
+  }, [nodeSetKey, graphData, colors])
 
   // Lightweight: update visual highlights without rebuilding simulation
   useEffect(() => {
@@ -193,7 +189,7 @@ export default function AssociationGraph({ memories }: AssociationGraphProps) {
       const q = highlight.toLowerCase()
       circles
         .attr("stroke", (d: GraphNode) =>
-          d.text.toLowerCase().includes(q) || d.id.toLowerCase().includes(q) ? "#7c9cff" : "none"
+          d.text.toLowerCase().includes(q) || d.id.toLowerCase().includes(q) ? colors.accent : "none"
         )
         .attr("stroke-width", (d: GraphNode) =>
           d.text.toLowerCase().includes(q) || d.id.toLowerCase().includes(q) ? 3 : 0
@@ -205,11 +201,11 @@ export default function AssociationGraph({ memories }: AssociationGraphProps) {
     // Selection highlight
     if (selected) {
       circles.attr("stroke", (d: GraphNode) =>
-        d.id === selected.id ? "#fff" : circles.attr("stroke") === "none" ? "none" : circles.attr("stroke")
+        d.id === selected.id ? colors.textPrimary : circles.attr("stroke") === "none" ? "none" : circles.attr("stroke")
       )
-      circles.filter((d: GraphNode) => d.id === selected.id).attr("stroke", "#fff").attr("stroke-width", 2)
+      circles.filter((d: GraphNode) => d.id === selected.id).attr("stroke", colors.textPrimary).attr("stroke-width", 2)
     }
-  }, [highlight, selected?.id])
+  }, [highlight, selected?.id, colors])
 
   const edgeCount = filteredMemories.reduce(
     (sum, m) => sum + m.associations.filter(a => filteredMemories.some(f => f.id === a)).length, 0
@@ -293,9 +289,9 @@ export default function AssociationGraph({ memories }: AssociationGraphProps) {
               노드를 클릭하면 상세 정보가 표시됩니다.
               <br /><br />
               <span className="text-text-secondary">노드 색상:</span><br />
-              <span className="inline-block ml-1 w-2 h-2 rounded-full bg-[#49dcb1]" /> 높음{" "}
-              <span className="inline-block ml-1 w-2 h-2 rounded-full bg-[#f5a65b]" /> 보통{" "}
-              <span className="inline-block ml-1 w-2 h-2 rounded-full bg-[#f87171]" /> 낮음
+              <span className="inline-block ml-1 w-2 h-2 rounded-full bg-accent-secondary" /> 높음{" "}
+              <span className="inline-block ml-1 w-2 h-2 rounded-full bg-accent-warm" /> 보통{" "}
+              <span className="inline-block ml-1 w-2 h-2 rounded-full bg-status-danger" /> 낮음
               <br />
               <span className="text-text-secondary">크기 = 중요도, 드래그 가능</span>
             </div>

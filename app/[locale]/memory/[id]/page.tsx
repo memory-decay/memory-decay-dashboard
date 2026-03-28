@@ -8,7 +8,8 @@ import {
 } from "recharts"
 import { useTranslations } from "next-intl"
 import { getMemoryById, forgetMemory, advanceTick, getMemoryHistory } from "@/lib/api"
-import { Memory, ActivationRecord, getFreshnessStatus, MTYPE_LABELS, CHART_TOOLTIP_STYLE } from "@/lib/types"
+import { Memory, ActivationRecord, getFreshnessStatus, MTYPE_LABELS } from "@/lib/types"
+import { useChartColors, getChartTooltipStyle } from "@/lib/theme-colors"
 import { ticksUntilThreshold } from "@/lib/decay"
 import StatusBadge from "@/components/status-badge"
 import ScoreDisplay from "@/components/score-display"
@@ -16,6 +17,7 @@ import DecayChart from "@/components/decay-chart"
 
 export default function MemoryDetailPage() {
   const t = useTranslations('memory')
+  const colors = useChartColors()
   const params = useParams()
   const router = useRouter()
   const id = params.id as string
@@ -155,26 +157,26 @@ export default function MemoryDetailPage() {
           </p>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={history} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#263042" />
-              <XAxis dataKey="tick" stroke="#70809c" fontSize={10} tickLine={false} />
-              <YAxis stroke="#70809c" fontSize={11} tickLine={false} domain={[0, 1]} />
-              <Tooltip contentStyle={CHART_TOOLTIP_STYLE} />
-              <Legend wrapperStyle={{ fontSize: 11, color: "#70809c" }} />
+              <CartesianGrid strokeDasharray="3 3" stroke={colors.gridLine} />
+              <XAxis dataKey="tick" stroke={colors.textMuted} fontSize={10} tickLine={false} />
+              <YAxis stroke={colors.textMuted} fontSize={11} tickLine={false} domain={[0, 1]} />
+              <Tooltip contentStyle={getChartTooltipStyle(colors)} />
+              <Legend wrapperStyle={{ fontSize: 11, color: colors.textMuted }} />
               <Line
-                type="monotone" dataKey="retrieval_score" stroke="#7c9cff"
+                type="monotone" dataKey="retrieval_score" stroke={colors.accent}
                 strokeWidth={2} dot={(props: Record<string, unknown>) => {
                   const { cx, cy } = props as { cx: number; cy: number; payload: { tick: number } }
                   if (reinforcementTicks.has((props as { payload: { tick: number } }).payload.tick)) {
                     return (
-                      <circle key={`r-${cx}-${cy}`} cx={cx} cy={cy} r={5} fill="#f87171" stroke="#f87171" />
+                      <circle key={`r-${cx}-${cy}`} cx={cx} cy={cy} r={5} fill={colors.danger} stroke={colors.danger} />
                     )
                   }
-                  return <circle key={`d-${cx}-${cy}`} cx={cx} cy={cy} r={1} fill="#7c9cff" />
+                  return <circle key={`d-${cx}-${cy}`} cx={cx} cy={cy} r={1} fill={colors.accent} />
                 }}
                 name={t('retrievalScore')}
               />
-              <Line type="monotone" dataKey="storage_score" stroke="#49dcb1" strokeWidth={2} dot={false} name={t('storageScore')} />
-              <Line type="monotone" dataKey="stability" stroke="#f5a65b" strokeWidth={2} dot={false} name={t('stability')} />
+              <Line type="monotone" dataKey="storage_score" stroke={colors.accentSecondary} strokeWidth={2} dot={false} name={t('storageScore')} />
+              <Line type="monotone" dataKey="stability" stroke={colors.accentWarm} strokeWidth={2} dot={false} name={t('stability')} />
             </LineChart>
           </ResponsiveContainer>
         </div>
