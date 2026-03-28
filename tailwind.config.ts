@@ -2,33 +2,34 @@ import type { Config } from "tailwindcss"
 
 const config: Config = {
   content: ["./app/**/*.{js,ts,jsx,tsx,mdx}", "./components/**/*.{js,ts,jsx,tsx,mdx}"],
+  darkMode: ["class", '[data-theme="dark"]'],
   theme: {
     extend: {
       colors: {
         bg: {
-          primary: "#0b0b0e",
-          surface: "#151821",
-          elevated: "#1d2230",
-          glow: "#101623",
+          primary: "rgb(var(--bg-primary) / <alpha-value>)",
+          surface: "rgb(var(--bg-surface) / <alpha-value>)",
+          elevated: "rgb(var(--bg-elevated) / <alpha-value>)",
+          glow: "rgb(var(--bg-glow) / <alpha-value>)",
         },
         accent: {
-          DEFAULT: "#7c9cff",
-          secondary: "#49dcb1",
-          warm: "#f5a65b",
+          DEFAULT: "rgb(var(--accent) / <alpha-value>)",
+          secondary: "rgb(var(--accent-secondary) / <alpha-value>)",
+          warm: "rgb(var(--accent-warm) / <alpha-value>)",
         },
         text: {
-          primary: "#f8fafc",
-          secondary: "#aab6cf",
-          muted: "#70809c",
+          primary: "rgb(var(--text-primary) / <alpha-value>)",
+          secondary: "rgb(var(--text-secondary) / <alpha-value>)",
+          muted: "rgb(var(--text-muted) / <alpha-value>)",
         },
         border: {
-          DEFAULT: "#263042",
-          strong: "#33415a",
+          DEFAULT: "rgb(var(--border) / <alpha-value>)",
+          strong: "rgb(var(--border-strong) / <alpha-value>)",
         },
         status: {
-          danger: "#f87171",
-          caution: "#fbbf24",
-          stable: "#34d399",
+          danger: "rgb(var(--status-danger) / <alpha-value>)",
+          caution: "rgb(var(--status-caution) / <alpha-value>)",
+          stable: "rgb(var(--status-stable) / <alpha-value>)",
         },
       },
       fontFamily: {
@@ -37,7 +38,7 @@ const config: Config = {
         mono: ["DM Mono", "ui-monospace", "monospace"],
       },
       boxShadow: {
-        panel: "0 12px 40px rgba(0,0,0,0.28)",
+        panel: "var(--shadow-panel)",
       },
     },
   },
