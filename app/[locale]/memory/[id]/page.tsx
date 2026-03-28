@@ -132,7 +132,7 @@ export default function MemoryDetailPage() {
           <ScoreDisplay label={t('stability')} value={memory.stability} color="stable" />
           <ScoreDisplay label={t('freshness')} value={memory.freshness} color="warm" />
         </div>
-        <div className="mt-4 flex items-center gap-2 rounded-lg bg-bg-primary/60 p-3">
+        <div className="mt-4 flex items-center gap-2 rounded bg-bg-primary/60 p-3">
           <span className="text-xs text-text-muted">{t('estimatedLife')}:</span>
           <span className="font-mono text-sm font-bold text-accent-secondary">
             ~{estimatedLife === Infinity ? t('infinity') : estimatedLife}{t('ticks')}
@@ -191,7 +191,7 @@ export default function MemoryDetailPage() {
               <Link
                 key={assocId}
                 href={`/memory/${assocId}`}
-                className="rounded-lg border border-border bg-bg-primary/60 px-3 py-1.5 font-mono text-xs text-accent hover:bg-accent/10 transition-colors"
+                className="rounded border border-border bg-bg-primary/60 px-3 py-1.5 font-mono text-xs text-accent hover:bg-accent/10 transition-colors"
               >
                 {assocId}
               </Link>

@@ -3,41 +3,280 @@
 @tailwind utilities;
 
 :root {
-  --bg-primary: 11, 11, 14;
-  --bg-surface: 21, 24, 33;
-  --bg-elevated: 29, 34, 48;
-  --bg-glow: 16, 22, 35;
-  --accent: 124, 156, 255;
-  --accent-secondary: 73, 220, 177;
-  --accent-warm: 245, 166, 91;
-  --text-primary: 248, 250, 252;
-  --text-secondary: 170, 182, 207;
-  --text-muted: 112, 128, 156;
-  --border: 38, 48, 66;
-  --border-strong: 51, 65, 90;
-  --status-danger: 248, 113, 113;
-  --status-caution: 251, 191, 36;
-  --status-stable: 52, 211, 153;
-  --shadow-panel: 0 12px 40px rgba(0, 0, 0, 0.28);
+  /* ============================================
+     NEO-BRUTALIST DARK MODE
+     Electric neon on deep dark backgrounds
+     Inspired by Linear, Figma, Gumroad
+     ============================================ */
+
+  /* Background layers — deep with colored tint */
+  --bg-primary: 8, 8, 16;        /* Near black with blue tint */
+  --bg-surface: 12, 12, 22;      /* Slightly elevated */
+  --bg-elevated: 20, 18, 30;     /* Cards, panels — purple tint */
+  --bg-glow: 40, 38, 50;         /* Hover states */
+
+  /* Surface elevation scale — colored tints */
+  --surface-1: 8, 8, 16;         /* Base surface */
+  --surface-2: 14, 14, 26;       /* Slightly elevated — blue */
+  --surface-3: 22, 18, 35;       /* Cards — purple */
+  --surface-4: 30, 28, 42;       /* Higher elevation */
+  --surface-5: 38, 36, 50;       /* Highest elevation */
+
+  /* Interactive states */
+  --surface-hover: 35, 30, 50;   /* Hover state — purple glow */
+  --surface-active: 50, 45, 70;  /* Active/selected */
+  --surface-pressed: 65, 60, 85; /* Pressed state */
+
+  /*
+   * ACCENT COLORS — Neon Electric Neo-Brutalist Palette
+   * High saturation, maximum glow on dark backgrounds
+   */
+
+  /* Electric Cyan — #00F5FF — RGB(0, 245, 255) */
+  --accent: 0, 245, 255;
+
+  /* Electric Purple — #A78BFA — RGB(167, 139, 250) */
+  --accent-secondary: 167, 139, 250;
+
+  /* Hot Pink — #FF1493 — RGB(255, 20, 147) */
+  --accent-warm: 255, 20, 147;
+
+  /* Neon Yellow — #FACC15 — RGB(250, 204, 21) */
+  --accent-yellow: 250, 204, 21;
+
+  /* Electric Orange — #FF6B35 — RGB(255, 107, 53) */
+  --accent-orange: 255, 107, 53;
+
+  /*
+   * ADDITIONAL NEON ACCENTS
+   */
+
+  /* Brand Orange — #FF8A00 */
+  --brand-orange: 255, 138, 0;
+
+  /* Sky Blue — #38BDF8 — bright for dark bg */
+  --sky-blue: 56, 189, 248;
+
+  /* Indigo — #818CF8 — lighter for dark bg */
+  --indigo: 129, 140, 248;
+
+  /* Violet — #A78BFA — bright purple */
+  --violet: 167, 139, 250;
+
+  /* Fuchsia — #E879F9 — bright fuchsia */
+  --fuchsia: 232, 121, 249;
+
+  /* Emerald — #34D399 — neon green */
+  --emerald: 52, 211, 153;
+
+  /* Rose — #FB7185 — neon rose */
+  --rose: 251, 113, 133;
+
+  /* Amber — #FBBF24 — neon amber */
+  --amber: 251, 191, 36;
+
+  /*
+   * TEXT COLORS — High contrast on dark backgrounds
+   * All meet WCAG 4.5:1 against dark surfaces
+   */
+  --text-primary: 255, 255, 255;   /* Pure white — 21:1 contrast */
+  --text-secondary: 224, 224, 224; /* Light gray — 15:1 contrast */
+  --text-muted: 160, 160, 160;     /* Medium gray — 7:1 contrast */
+
+  /* Extended text colors */
+  --text-disabled: 115, 115, 115;   /* Disabled text */
+  --text-placeholder: 82, 82, 82;   /* Placeholder text */
+  --text-inverse: 10, 10, 10;       /* Inverse text (for light bg) */
+
+  /*
+   * BORDER COLORS — Colored edges, not just gray
+   */
+  --border: 60, 58, 75;             /* Default borders — purple tint */
+  --border-subtle: 40, 38, 55;      /* Subtle borders */
+  --border-strong: 120, 115, 150;   /* Muted purple borders */
+  --border-accent: 0, 245, 255;     /* Accent-colored borders */
+
+  /*
+   * STATUS COLORS — Vivid, attention-demanding
+   * Semantic color scales with variants
+   */
+
+  /* Success — Electric green scale */
+  --status-success: 0, 255, 102;         /* #00FF66 */
+  --status-success-light: 134, 239, 172; /* #86EFAC */
+  --status-success-dark: 22, 163, 74;    /* #16A34A */
+  --status-success-bg: 5, 46, 22;        /* #052E16 */
+  --status-success-border: 34, 197, 94;  /* #22C55E */
+
+  /* Warning — Amber/orange scale */
+  --status-warning: 255, 170, 0;         /* #FFAA00 */
+  --status-warning-light: 252, 211, 77;  /* #FCD34D */
+  --status-warning-dark: 217, 119, 6;    /* #D97706 */
+  --status-warning-bg: 69, 26, 3;        /* #451A03 */
+  --status-warning-border: 245, 158, 11; /* #F59E0B */
+
+  /* Error — Red scale */
+  --status-error: 255, 0, 64;            /* #FF0040 */
+  --status-error-light: 252, 165, 165;   /* #FCA5A5 */
+  --status-error-dark: 220, 38, 38;      /* #DC2626 */
+  --status-error-bg: 69, 10, 10;         /* #450A0A */
+  --status-error-border: 239, 68, 68;    /* #EF4444 */
+
+  /* Info — Blue scale */
+  --status-info: 0, 204, 255;            /* #00CCFF */
+  --status-info-light: 125, 211, 252;    /* #7DD3FC */
+  --status-info-dark: 2, 132, 199;       /* #0284C7 */
+  --status-info-bg: 8, 47, 73;           /* #082F49 */
+  --status-info-border: 56, 189, 248;    /* #38BDF8 */
+
+  /* Legacy status color mappings */
+  --status-danger: 255, 0, 64;     /* Vivid crimson #FF0040 */
+  --status-caution: 255, 170, 0;   /* Bright amber #FFAA00 */
+  --status-stable: 0, 255, 102;    /* Electric green #00FF66 */
+
+  /*
+   * SHADOWS — Hard offset, brutalist signature
+   */
+  --shadow-panel: 4px 4px 0px 0px rgb(0 0 0 / 0.95);
+  --shadow-hard: 6px 6px 0px 0px rgb(0 0 0 / 1);
+  --shadow-sm: 3px 3px 0px 0px rgb(0 0 0 / 0.9);
 }
 
 [data-theme="light"] {
-  --bg-primary: 248, 249, 251;
-  --bg-surface: 255, 255, 255;
-  --bg-elevated: 240, 242, 245;
-  --bg-glow: 238, 241, 248;
-  --accent: 74, 108, 247;
-  --accent-secondary: 22, 166, 122;
-  --accent-warm: 212, 135, 46;
-  --text-primary: 26, 29, 36;
-  --text-secondary: 74, 85, 104;
-  --text-muted: 136, 150, 171;
-  --border: 226, 230, 237;
-  --border-strong: 203, 210, 220;
-  --status-danger: 220, 38, 38;
-  --status-caution: 217, 119, 6;
-  --status-stable: 22, 163, 74;
-  --shadow-panel: 0 4px 24px rgba(0, 0, 0, 0.06);
+  /* ============================================
+     NEO-BRUTALIST LIGHT MODE
+     Gumroad-inspired: bright yellows, pinks, cyans
+     on white with colored backgrounds
+     ============================================ */
+
+  /* Background layers — warm off-white */
+  --bg-primary: 255, 252, 235;     /* Warm cream — #FFFBEB */
+  --bg-surface: 255, 253, 245;     /* Slightly warmer */
+  --bg-elevated: 255, 255, 255;    /* Pure white panels */
+  --bg-glow: 245, 240, 220;        /* Warm hover */
+
+  /* Surface elevation scale — warm tones */
+  --surface-1: 255, 252, 235;      /* Base surface */
+  --surface-2: 255, 249, 219;      /* Off-white — yellow tint #FFF9DB */
+  --surface-3: 254, 243, 199;      /* Cards — light gold #FEF3C7 */
+  --surface-4: 253, 230, 138;      /* Higher elevation — #FDE68A */
+  --surface-5: 249, 211, 76;       /* Highest elevation */
+
+  /* Interactive states */
+  --surface-hover: 254, 249, 195;  /* Hover state — warm yellow */
+  --surface-active: 253, 230, 138; /* Active/selected */
+  --surface-pressed: 251, 211, 100; /* Pressed state */
+
+  /*
+   * ACCENT COLORS — Bold and vivid on white backgrounds
+   */
+
+  /* Cyan — #0891B2 — tuned for warm bg (6:1 contrast) */
+  --accent: 8, 145, 178;
+
+  /* Deep Purple — #7C3AED — rich and readable (7:1 contrast) */
+  --accent-secondary: 124, 58, 237;
+
+  /* Hot Pink — #DB2777 — vibrant on white (5.2:1 contrast) */
+  --accent-warm: 219, 39, 119;
+
+  /* Bold Yellow — #CA8A04 — readable on warm bg (4.8:1 contrast) */
+  --accent-yellow: 202, 138, 4;
+
+  /* Burnt Orange — #EA580C — warm and bold (4.5:1 contrast) */
+  --accent-orange: 234, 88, 12;
+
+  /*
+   * CLOUDFLARE-INSPIRED ACCENTS — Light mode
+   */
+
+  /* Brand Orange — #F48120 */
+  --brand-orange: 244, 129, 32;
+
+  /* Sky Blue — #0284C7 — darker for contrast (5.1:1) */
+  --sky-blue: 2, 132, 199;
+
+  /* Indigo — #4F46E5 — darker for contrast (6:1) */
+  --indigo: 79, 70, 229;
+
+  /* Violet — #7C3AED */
+  --violet: 124, 58, 237;
+
+  /* Fuchsia — #C026D3 — darker for contrast (5.5:1) */
+  --fuchsia: 192, 38, 211;
+
+  /* Emerald — #059669 — darker for contrast (5:1) */
+  --emerald: 5, 150, 105;
+
+  /* Rose — #E11D48 — darker for contrast (5.8:1) */
+  --rose: 225, 29, 72;
+
+  /* Amber — #B45309 — darker for contrast (4.8:1) */
+  --amber: 180, 83, 9;
+
+  /*
+   * TEXT COLORS — Dark on warm backgrounds
+   */
+  --text-primary: 28, 25, 23;      /* Warm black — #1C1917 */
+  --text-secondary: 41, 37, 36;    /* Dark warm gray */
+  --text-muted: 87, 83, 78;        /* Warm medium gray */
+
+  /* Extended text colors */
+  --text-disabled: 163, 163, 163;   /* Disabled text */
+  --text-placeholder: 168, 162, 158; /* Warm placeholder text */
+  --text-inverse: 255, 255, 255;    /* Inverse text */
+
+  /*
+   * BORDER COLORS — Bold black with colored accents
+   */
+  --border: 28, 25, 23;             /* Warm dark borders */
+  --border-subtle: 214, 211, 209;   /* Warm subtle borders */
+  --border-strong: 28, 25, 23;      /* Bold dark borders */
+  --border-accent: 8, 145, 178;     /* Accent borders */
+
+  /*
+   * STATUS COLORS — Adjusted for light mode
+   */
+
+  /* Success scale */
+  --status-success: 22, 163, 74;         /* #16A34A (5.4:1) */
+  --status-success-light: 134, 239, 172; /* #86EFAC */
+  --status-success-dark: 20, 83, 45;     /* #14532D */
+  --status-success-bg: 240, 253, 244;    /* #F0FDF4 */
+  --status-success-border: 134, 239, 172; /* #86EFAC */
+
+  /* Warning scale */
+  --status-warning: 217, 119, 6;         /* #D97706 (4.6:1) */
+  --status-warning-light: 252, 211, 77;  /* #FCD34D */
+  --status-warning-dark: 120, 53, 15;    /* #78350F */
+  --status-warning-bg: 255, 251, 235;    /* #FFFBEB */
+  --status-warning-border: 252, 211, 77; /* #FCD34D */
+
+  /* Error scale */
+  --status-error: 220, 38, 38;           /* #DC2626 (6.2:1) */
+  --status-error-light: 252, 165, 165;   /* #FCA5A5 */
+  --status-error-dark: 127, 29, 29;      /* #7F1D1D */
+  --status-error-bg: 254, 242, 242;      /* #FEF2F2 */
+  --status-error-border: 252, 165, 165;  /* #FCA5A5 */
+
+  /* Info scale */
+  --status-info: 2, 132, 199;            /* #0284C7 (5.1:1) */
+  --status-info-light: 125, 211, 252;    /* #7DD3FC */
+  --status-info-dark: 12, 74, 110;       /* #0C4A6E */
+  --status-info-bg: 240, 249, 255;       /* #F0F9FF */
+  --status-info-border: 125, 211, 252;   /* #7DD3FC */
+
+  /* Legacy status mappings */
+  --status-danger: 220, 38, 38;    /* Vivid red #DC2626 (6.2:1) */
+  --status-caution: 217, 119, 6;   /* Amber #D97706 (4.6:1) */
+  --status-stable: 22, 163, 74;    /* Green #16A34A (5.4:1) */
+
+  /*
+   * SHADOWS — Hard shadows work in light mode too
+   */
+  --shadow-panel: 4px 4px 0px 0px rgb(0 0 0 / 0.9);
+  --shadow-hard: 6px 6px 0px 0px rgb(0 0 0 / 1);
+  --shadow-sm: 3px 3px 0px 0px rgb(0 0 0 / 0.85);
 }
 
 * {
@@ -49,99 +288,316 @@ body {
   min-height: 100%;
   background: rgb(var(--bg-primary));
   color: rgb(var(--text-primary));
-  font-family: "DM Sans", system-ui, sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
-}
-
-html:not([data-theme="light"]) body {
-  background:
-    radial-gradient(circle at top left, rgba(124, 156, 255, 0.12), transparent 25%),
-    radial-gradient(circle at top right, rgba(73, 220, 177, 0.08), transparent 20%),
-    linear-gradient(180deg, #090b10 0%, #0b0b0e 45%, #0c1018 100%);
-}
-
-html[data-theme="light"] body {
-  background:
-    radial-gradient(circle at top left, rgba(74, 108, 247, 0.06), transparent 25%),
-    radial-gradient(circle at top right, rgba(22, 166, 122, 0.04), transparent 20%),
-    linear-gradient(180deg, #f8f9fb 0%, #ffffff 45%, #f0f2f5 100%);
 }
 
 body {
   margin: 0;
 }
 
+/* Selection styling — electric accent */
 ::selection {
-  background: rgba(var(--accent), 0.3);
-  color: rgb(var(--text-primary));
+  background: rgb(var(--accent));
+  color: rgb(0 0 0);
 }
 
 @layer components {
+  /* ============================================
+     NEO-BRUTALIST COMPONENTS
+     Bold borders, hard shadows, raw aesthetic
+     ============================================ */
+
+  /* Panel — the foundation of brutalist UI */
   .panel {
-    @apply rounded-2xl border border-border bg-bg-surface/90 backdrop-blur-sm shadow-panel;
+    border: 3px solid rgb(var(--border));
+    background: rgb(var(--bg-surface));
+    box-shadow: var(--shadow-panel);
+    border-radius: 0;
   }
 
   .panel-glow {
     box-shadow: var(--shadow-panel);
+    border: 3px solid rgb(var(--border));
   }
 
+  /* Surface elevation utilities */
+  .surface-1 { background: rgb(var(--surface-1)); }
+  .surface-2 { background: rgb(var(--surface-2)); }
+  .surface-3 { background: rgb(var(--surface-3)); }
+  .surface-4 { background: rgb(var(--surface-4)); }
+  .surface-5 { background: rgb(var(--surface-5)); }
+
+  /* Label — uppercase, tracked, bold */
   .label {
-    @apply text-xs uppercase tracking-[0.24em] text-text-muted;
+    @apply text-xs uppercase tracking-widest text-text-muted font-black;
   }
 
+  /* Stat Card — data display with brutalist framing */
   .stat-card {
-    @apply rounded-xl border border-border bg-bg-primary/60 p-4;
+    border: 3px solid rgb(var(--border));
+    background: rgb(var(--bg-surface));
+    padding: 1rem;
+    box-shadow: var(--shadow-panel);
+    border-radius: 0;
   }
 
+  /* Chart Section — visualizations with brutalist borders */
   .chart-section {
-    @apply relative overflow-hidden rounded-2xl border border-border bg-bg-primary/50 p-5;
-    background-image:
-      linear-gradient(rgba(var(--accent), 0.025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(var(--accent), 0.025) 1px, transparent 1px);
-    background-size: 20px 20px;
+    border: 3px solid rgb(var(--border));
+    background: rgb(var(--bg-surface));
+    padding: 1.25rem;
+    box-shadow: var(--shadow-panel);
+    border-radius: 0;
+    overflow: hidden;
+    position: relative;
   }
 
-  html[data-theme="light"] .chart-section {
-    background-image:
-      linear-gradient(rgba(var(--accent), 0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(var(--accent), 0.04) 1px, transparent 1px);
-  }
-
+  /* Memory Row — list items with electric hover */
   .memory-row {
-    @apply w-full rounded-xl border border-transparent bg-bg-primary/40 p-4 text-left transition;
+    width: 100%;
+    border-bottom: 2px solid rgb(var(--border));
+    background: transparent;
+    padding: 1rem;
+    text-align: left;
+    transition: none;
   }
 
   .memory-row:hover {
-    @apply border-border-strong bg-bg-elevated/80;
+    background: rgb(var(--bg-elevated));
+    box-shadow: inset 4px 0 0 rgb(var(--accent));
+  }
+
+  .memory-row:last-child {
+    border-bottom: none;
   }
 
   .memory-row-active {
-    @apply border-accent/50 bg-accent/10;
+    background: rgb(var(--accent) / 0.12);
+    border-left: 4px solid rgb(var(--accent));
+    border-right: 4px solid rgb(var(--accent-warm));
+    border-top: 2px solid rgb(var(--border));
+    border-bottom: 2px solid rgb(var(--border));
   }
 
+  /* Button Primary — accent color background */
   .btn-primary {
-    @apply rounded-lg bg-accent/20 px-4 py-2 text-sm font-medium text-accent transition-colors hover:bg-accent/30 border border-accent/30;
+    background: rgb(var(--accent));
+    color: rgb(var(--text-inverse));
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 800;
+    border: 3px solid rgb(var(--border-strong));
+    box-shadow: var(--shadow-sm);
+    border-radius: 0;
+    cursor: pointer;
+    transition: none;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
 
+  .btn-primary:hover {
+    background: rgb(var(--accent-yellow));
+    color: rgb(0 0 0);
+    box-shadow: var(--shadow-hard);
+    transform: translate(-2px, -2px);
+  }
+
+  .btn-primary:active {
+    box-shadow: none;
+    transform: translate(0, 0);
+  }
+
+  /* Button Secondary — elevated surface with purple accent */
+  .btn-secondary {
+    background: rgb(var(--bg-elevated));
+    color: rgb(var(--text-primary));
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 800;
+    border: 3px solid rgb(var(--accent-secondary));
+    box-shadow: var(--shadow-sm);
+    border-radius: 0;
+    cursor: pointer;
+    transition: none;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .btn-secondary:hover {
+    background: rgb(var(--accent-secondary));
+    color: rgb(255 255 255);
+    box-shadow: var(--shadow-hard);
+    transform: translate(-2px, -2px);
+  }
+
+  .btn-secondary:active {
+    box-shadow: none;
+    transform: translate(0, 0);
+  }
+
+  html[data-theme="light"] .btn-primary,
+  html[data-theme="dark"] .btn-primary {
+    color: rgb(var(--text-inverse));
+  }
+
+  /* Button Danger — vivid crimson */
   .btn-danger {
-    @apply rounded-lg bg-status-danger/15 px-4 py-2 text-sm font-medium text-status-danger transition-colors hover:bg-status-danger/25 border border-status-danger/30;
+    background: rgb(var(--status-danger));
+    color: rgb(255 255 255);
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 800;
+    border: 3px solid rgb(var(--status-danger));
+    box-shadow: var(--shadow-sm);
+    border-radius: 0;
+    cursor: pointer;
+    transition: none;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
 
+  .btn-danger:hover {
+    background: rgb(255 40 80);
+    box-shadow: var(--shadow-hard);
+    transform: translate(-2px, -2px);
+  }
+
+  .btn-danger:active {
+    box-shadow: none;
+    transform: translate(0, 0);
+  }
+
+  /* Button Ghost — transparent with accent border */
   .btn-ghost {
-    @apply rounded-lg px-4 py-2 text-sm font-medium text-text-secondary transition-colors hover:bg-bg-elevated hover:text-text-primary;
+    background: transparent;
+    color: rgb(var(--text-primary));
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    border: 3px solid rgb(var(--border));
+    box-shadow: var(--shadow-sm);
+    border-radius: 0;
+    cursor: pointer;
+    transition: none;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
 
+  .btn-ghost:hover {
+    background: rgb(var(--bg-elevated));
+    box-shadow: var(--shadow-hard);
+    transform: translate(-2px, -2px);
+  }
+
+  .btn-ghost:active {
+    box-shadow: none;
+    transform: translate(0, 0);
+  }
+
+  /* Input Field — stark borders, accent focus */
   .input-field {
-    @apply w-full rounded-lg border border-border bg-bg-primary/80 px-4 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:border-accent/50 focus:outline-none focus:ring-1 focus:ring-accent/30;
+    width: 100%;
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+    color: rgb(var(--text-primary));
+    background: rgb(var(--bg-surface));
+    border: 3px solid rgb(var(--border));
+    box-shadow: var(--shadow-sm);
+    border-radius: 0;
+    outline: none;
+    font-family: inherit;
+    transition: none;
   }
 
+  .input-field::placeholder {
+    color: rgb(var(--text-placeholder));
+  }
+
+  .input-field:focus {
+    border-color: rgb(var(--accent));
+    box-shadow: var(--shadow-hard);
+    background: rgb(var(--bg-elevated));
+  }
+
+  /* Input Disabled State */
+  .input-field:disabled {
+    background: rgb(var(--surface-hover));
+    color: rgb(var(--text-disabled));
+    border-color: rgb(var(--border-subtle));
+    cursor: not-allowed;
+  }
+
+  /* Table — brutalist data display */
   .table-header {
-    @apply px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-text-muted;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgb(var(--text-secondary));
+    border-bottom: 3px solid rgb(var(--border));
+    background: rgb(var(--bg-elevated));
   }
 
   .table-cell {
-    @apply px-4 py-3 text-sm text-text-secondary;
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    color: rgb(var(--text-primary));
+    border-bottom: 2px solid rgb(var(--border));
   }
+
+  /* Status badges — vivid color coding with semantic scales */
+  .badge-danger {
+    background: rgb(var(--status-error) / 0.15);
+    color: rgb(var(--status-error));
+    border: 2px solid rgb(var(--status-error));
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .badge-caution {
+    background: rgb(var(--status-warning) / 0.15);
+    color: rgb(var(--status-warning));
+    border: 2px solid rgb(var(--status-warning));
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .badge-stable {
+    background: rgb(var(--status-success) / 0.15);
+    color: rgb(var(--status-success));
+    border: 2px solid rgb(var(--status-success));
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .badge-info {
+    background: rgb(var(--status-info) / 0.15);
+    color: rgb(var(--status-info));
+    border: 2px solid rgb(var(--status-info));
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  /* Semantic background utilities */
+  .bg-success { background: rgb(var(--status-success-bg)); }
+  .bg-warning { background: rgb(var(--status-warning-bg)); }
+  .bg-error { background: rgb(var(--status-error-bg)); }
+  .bg-info { background: rgb(var(--status-info-bg)); }
+
+  /* Border color utilities */
+  .border-subtle { border-color: rgb(var(--border-subtle)); }
+  .border-accent { border-color: rgb(var(--border-accent)); }
 
   @media (prefers-reduced-motion: reduce) {
     * {

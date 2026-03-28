@@ -182,5 +182,17 @@
     "decayParams": "감쇠 파라미터",
     "connectionError": "서버에 연결할 수 없습니다.",
     "enterTextAndCategory": "텍스트와 카테고리를 입력하세요."
+  },
+  "tickControls": {
+    "label": "틱 제어",
+    "manual": "수동 틱",
+    "auto": "자동 틱"
+  },
+  "decayChart": {
+    "title": "활성도 감쇠 곡선 ({ticks}틱 투영)",
+    "xAxis": "틱",
+    "activation": "활성도",
+    "tick": "틱",
+    "threshold": "망각 임계값"
   }
 }
