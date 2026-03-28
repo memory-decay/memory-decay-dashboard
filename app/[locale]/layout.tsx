@@ -3,7 +3,6 @@ import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import Sidebar from '@/components/sidebar';
 import { locales } from '@/lib/i18n';
-import '../globals.css';
 
 export default async function LocaleLayout({
   children,
@@ -21,15 +20,11 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale}>
-      <body>
-        <NextIntlClientProvider messages={messages}>
-          <Sidebar />
-          <main className="ml-56 min-h-screen p-6">
-            {children}
-          </main>
-        </NextIntlClientProvider>
-      </body>
-    </html>
+    <NextIntlClientProvider messages={messages}>
+      <Sidebar />
+      <main className="ml-56 min-h-screen p-6">
+        {children}
+      </main>
+    </NextIntlClientProvider>
   );
 }
