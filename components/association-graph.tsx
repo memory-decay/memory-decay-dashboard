@@ -4,6 +4,7 @@ import { useRef, useEffect, useState, useCallback, useMemo } from "react"
 import * as d3 from "d3"
 import Link from "next/link"
 import { Memory, MTYPE_LABELS } from "@/lib/types"
+import { useTranslations } from "next-intl"
 
 interface GraphNode extends d3.SimulationNodeDatum {
   id: string
@@ -31,6 +32,7 @@ function scoreColor(score: number): string {
 }
 
 export default function AssociationGraph({ memories }: AssociationGraphProps) {
+  const t = useTranslations('search')
   const svgRef = useRef<SVGSVGElement>(null)
   const simulationRef = useRef<d3.Simulation<GraphNode, GraphLink> | null>(null)
   const [selected, setSelected] = useState<GraphNode | null>(null)
@@ -220,7 +222,7 @@ export default function AssociationGraph({ memories }: AssociationGraphProps) {
         <div className="flex-1 min-w-[200px] max-w-sm">
           <input
             type="text"
-            placeholder="메모리 검색..."
+            placeholder={t('placeholder')}
             value={highlight}
             onChange={e => setHighlight(e.target.value)}
             className="input-field text-sm"

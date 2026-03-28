@@ -6,6 +6,7 @@ import Link from "next/link"
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
 } from "recharts"
+import { useTranslations } from "next-intl"
 import { getMemoryById, forgetMemory, advanceTick, getMemoryHistory } from "@/lib/api"
 import { Memory, ActivationRecord, getFreshnessStatus, MTYPE_LABELS, CHART_TOOLTIP_STYLE } from "@/lib/types"
 import { ticksUntilThreshold } from "@/lib/decay"
@@ -14,6 +15,7 @@ import ScoreDisplay from "@/components/score-display"
 import DecayChart from "@/components/decay-chart"
 
 export default function MemoryDetailPage() {
+  const t = useTranslations('memory')
   const params = useParams()
   const router = useRouter()
   const id = params.id as string
@@ -36,12 +38,12 @@ export default function MemoryDetailPage() {
 
   async function handleForget() {
     if (!memory) return
-    if (!confirm("이 메모리를 삭제하시겠습니까?")) return
+    if (!confirm(t('confirmDelete'))) return
     try {
       await forgetMemory(memory.id)
       router.push("/")
     } catch {
-      alert("서버에 연결할 수 없습니다.")
+      alert(t('connectionError'))
     }
   }
 
@@ -52,11 +54,11 @@ export default function MemoryDetailPage() {
   }
 
   if (loading) {
-    return <div className="flex items-center justify-center h-64 text-text-muted">불러오는 중...</div>
+    return <div className="flex items-center justify-center h-64 text-text-muted">{t('loading')}</div>
   }
 
   if (!memory) {
-    return <div className="flex items-center justify-center h-64 text-text-muted">메모리를 찾을 수 없습니다.</div>
+    return <div className="flex items-center justify-center h-64 text-text-muted">{t('notFound')}</div>
   }
 
   const estimatedLife = ticksUntilThreshold(memory.retrieval_score, memory.importance, memory.stability)
@@ -73,67 +75,67 @@ export default function MemoryDetailPage() {
     <div className="space-y-6">
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm text-text-muted">
-        <Link href="/" className="hover:text-text-primary transition-colors">대시보드</Link>
+        <Link href="/" className="hover:text-text-primary transition-colors">{t('breadcrumb.dashboard')}</Link>
         <span>/</span>
-        <span className="text-text-secondary">메모리 상세</span>
+        <span className="text-text-secondary">{t('breadcrumb.detail')}</span>
       </div>
 
       {/* Header */}
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-xl font-bold text-text-primary">메모리 상세</h1>
+            <h1 className="text-xl font-bold text-text-primary">{t('title')}</h1>
             <StatusBadge status={getFreshnessStatus(memory.freshness)} />
           </div>
           <p className="font-mono text-xs text-text-muted">{memory.id}</p>
         </div>
         <div className="flex gap-2">
-          <button onClick={handleReinforce} className="btn-primary">강화</button>
-          <button onClick={handleForget} className="btn-danger">삭제</button>
+          <button onClick={handleReinforce} className="btn-primary">{t('reinforce')}</button>
+          <button onClick={handleForget} className="btn-danger">{t('delete')}</button>
         </div>
       </div>
 
       {/* Memory text */}
       <div className="panel p-5">
-        <div className="label mb-2">내용</div>
+        <div className="label mb-2">{t('content')}</div>
         <p className="text-text-primary leading-relaxed">{memory.text}</p>
       </div>
 
       {/* Metadata grid */}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <div className="stat-card">
-          <div className="label mb-1">카테고리</div>
+          <div className="label mb-1">{t('category')}</div>
           <div className="text-sm font-medium text-text-primary">{memory.category}</div>
         </div>
         <div className="stat-card">
-          <div className="label mb-1">유형</div>
+          <div className="label mb-1">{t('type')}</div>
           <div className="text-sm font-medium text-text-primary">{MTYPE_LABELS[memory.mtype] || memory.mtype}</div>
         </div>
         <div className="stat-card">
-          <div className="label mb-1">중요도</div>
+          <div className="label mb-1">{t('importance')}</div>
           <div className="font-mono text-lg font-bold text-accent">{memory.importance.toFixed(2)}</div>
         </div>
         <div className="stat-card">
-          <div className="label mb-1">생성 틱</div>
+          <div className="label mb-1">{t('createdTick')}</div>
           <div className="font-mono text-lg font-bold text-text-primary">{memory.created_tick}</div>
         </div>
       </div>
 
       {/* Scores */}
       <div className="panel p-5">
-        <div className="label mb-4">현재 점수</div>
+        <div className="label mb-4">{t('currentScores')}</div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <ScoreDisplay label="검색 점수" value={memory.retrieval_score} color="accent" />
-          <ScoreDisplay label="저장 점수" value={memory.storage_score} color="secondary" />
-          <ScoreDisplay label="안정성" value={memory.stability} color="stable" />
-          <ScoreDisplay label="신선도" value={memory.freshness} color="warm" />
+          <ScoreDisplay label={t('retrievalScore')} value={memory.retrieval_score} color="accent" />
+          <ScoreDisplay label={t('storageScore')} value={memory.storage_score} color="secondary" />
+          <ScoreDisplay label={t('stability')} value={memory.stability} color="stable" />
+          <ScoreDisplay label={t('freshness')} value={memory.freshness} color="warm" />
         </div>
         <div className="mt-4 flex items-center gap-2 rounded-lg bg-bg-primary/60 p-3">
-          <span className="text-xs text-text-muted">예상 수명:</span>
+          <span className="text-xs text-text-muted">{t('estimatedLife')}:</span>
           <span className="font-mono text-sm font-bold text-accent-secondary">
-            ~{estimatedLife === Infinity ? "∞" : estimatedLife}틱
+            ~{estimatedLife === Infinity ? t('infinity') : estimatedLife}{t('ticks')}
           </span>
-          <span className="text-xs text-text-muted">(활성도 &lt; 0.01 까지)</span>
+          <span className="text-xs text-text-muted">{t('estimatedLifeNote')}</span>
         </div>
       </div>
 
@@ -144,12 +146,12 @@ export default function MemoryDetailPage() {
         stability={memory.stability}
       />
 
-      {/* Activation History (Feature 1) */}
+      {/* Activation History */}
       {history.length > 0 && (
         <div className="panel p-5">
-          <div className="label mb-3">활성화 히스토리</div>
+          <div className="label mb-3">{t('activationHistory')}</div>
           <p className="mb-4 text-xs text-text-muted">
-            시간에 따른 점수 변화{reinforcementTicks.size > 0 && ` · 강화 이벤트 ${reinforcementTicks.size}회 감지`}
+            {t('scoreChangeOverTime')}{reinforcementTicks.size > 0 && ` · ${t('reinforcementDetected', { count: reinforcementTicks.size })}`}
           </p>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={history} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
@@ -169,10 +171,10 @@ export default function MemoryDetailPage() {
                   }
                   return <circle key={`d-${cx}-${cy}`} cx={cx} cy={cy} r={1} fill="#7c9cff" />
                 }}
-                name="검색 점수"
+                name={t('retrievalScore')}
               />
-              <Line type="monotone" dataKey="storage_score" stroke="#49dcb1" strokeWidth={2} dot={false} name="저장 점수" />
-              <Line type="monotone" dataKey="stability" stroke="#f5a65b" strokeWidth={2} dot={false} name="안정성" />
+              <Line type="monotone" dataKey="storage_score" stroke="#49dcb1" strokeWidth={2} dot={false} name={t('storageScore')} />
+              <Line type="monotone" dataKey="stability" stroke="#f5a65b" strokeWidth={2} dot={false} name={t('stability')} />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -181,7 +183,7 @@ export default function MemoryDetailPage() {
       {/* Associations */}
       {memory.associations.length > 0 && (
         <div className="panel p-5">
-          <div className="label mb-3">연관 메모리</div>
+          <div className="label mb-3">{t('associatedMemories')}</div>
           <div className="flex flex-wrap gap-2">
             {memory.associations.map((assocId) => (
               <Link
@@ -199,7 +201,7 @@ export default function MemoryDetailPage() {
       {/* Speaker */}
       {memory.speaker && (
         <div className="flex items-center gap-2 text-xs text-text-muted">
-          <span>화자:</span>
+          <span>{t('speaker')}:</span>
           <span className="rounded bg-bg-elevated px-2 py-0.5 text-text-secondary">{memory.speaker}</span>
         </div>
       )}
