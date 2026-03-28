@@ -18,12 +18,12 @@ export default function ScoreDisplay({ label, value, color = "accent" }: ScoreDi
   return (
     <div>
       <div className="mb-1 flex items-center justify-between">
-        <span className="text-xs text-text-muted">{label}</span>
-        <span className={`font-mono text-sm font-bold ${c.text}`}>{percentage}%</span>
+        <span className="text-xs text-text-muted uppercase font-bold tracking-wider">{label}</span>
+        <span className={`font-mono text-sm font-black ${c.text}`}>{percentage}%</span>
       </div>
-      <div className="h-1.5 rounded-full bg-bg-primary/80">
+      <div className="h-2 bg-bg-primary/80 border border-border">
         <div
-          className={`h-full rounded-full ${c.bar} transition-all duration-500`}
+          className={`h-full ${c.bar} transition-all duration-500`}
           style={{ width: `${percentage}%` }}
         />
       </div>

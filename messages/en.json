@@ -182,5 +182,17 @@
     "decayParams": "Decay Parameters",
     "connectionError": "Cannot connect to server.",
     "enterTextAndCategory": "Enter text and category."
+  },
+  "tickControls": {
+    "label": "TICK CONTROL",
+    "manual": "MANUAL",
+    "auto": "AUTO"
+  },
+  "decayChart": {
+    "title": "Activation Decay Curve ({ticks} Tick Projection)",
+    "xAxis": "Tick",
+    "activation": "Activation",
+    "tick": "Tick",
+    "threshold": "Forgetting Threshold"
   }
 }

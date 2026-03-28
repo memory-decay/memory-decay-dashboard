@@ -83,19 +83,72 @@ export async function resetMemories(): Promise<{ status: string; cleared: number
   })
 }
 
-// ── All Memories (uses search with broad query) ─────────────
+// ── All Memories ──────────────────────────────────────────────
 
 export async function getAllMemories(): Promise<Memory[]> {
-  const data = await apiFetch<{ results: Memory[] }>("/search", {
-    method: "POST",
-    body: JSON.stringify({ query: "", top_k: 50 }),
-  })
-  return data.results
+  const data = await apiFetch<{
+    memories: Array<{
+      id: string
+      content: string
+      mtype: string
+      category: string
+      importance: number
+      speaker: string
+      created_tick: number
+      storage_score: number
+      retrieval_score: number
+      stability: number
+      last_activated_tick: number
+      retrieval_count: number
+    }>
+  }>("/admin/memories?per_page=50")
+  return data.memories.map(m => ({
+    id: m.id,
+    text: m.content,
+    importance: m.importance,
+    mtype: m.mtype as Memory["mtype"],
+    category: m.category,
+    created_tick: m.created_tick,
+    retrieval_score: m.retrieval_score,
+    storage_score: m.storage_score,
+    stability: m.stability,
+    freshness: 1,
+    associations: [] as string[],
+    speaker: m.speaker,
+  }))
 }
 
 export async function getMemoryById(id: string): Promise<Memory | null> {
-  const all = await getAllMemories()
-  return all.find(m => m.id === id) || null
+  try {
+    const data = await apiFetch<{
+      id: string
+      content: string
+      mtype: string
+      category: string
+      importance: number
+      speaker: string
+      created_tick: number
+      storage_score: number
+      retrieval_score: number
+      stability: number
+    }>(`/admin/memories/${id}`)
+    return {
+      id: data.id,
+      text: data.content,
+      importance: data.importance,
+      mtype: data.mtype as Memory["mtype"],
+      category: data.category,
+      created_tick: data.created_tick,
+      retrieval_score: data.retrieval_score,
+      storage_score: data.storage_score,
+      stability: data.stability,
+      freshness: 1,
+      associations: [],
+      speaker: data.speaker,
+    }
+  } catch {
+    return null
+  }
 }
 
 // ── Time-Series (Feature 1) ──────────────────────────────────

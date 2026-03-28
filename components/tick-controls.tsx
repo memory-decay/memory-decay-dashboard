@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useTranslations } from "next-intl"
 import { advanceTick, autoTick } from "@/lib/api"
 
 interface TickControlsProps {
@@ -9,6 +10,7 @@ interface TickControlsProps {
 }
 
 export default function TickControls({ currentTick, onTickUpdate }: TickControlsProps) {
+  const t = useTranslations('tickControls')
   const [tickCount, setTickCount] = useState(1)
   const [loading, setLoading] = useState(false)
 
@@ -37,30 +39,30 @@ export default function TickControls({ currentTick, onTickUpdate }: TickControls
 
   return (
     <div className="flex items-center gap-3">
-      <span className="text-xs text-text-muted">틱 제어</span>
-      <div className="flex items-center gap-1 rounded-lg border border-border bg-bg-primary/60 p-1">
+      <span className="text-xs text-text-muted">{t('label')}</span>
+      <div className="flex items-center gap-1 border-3 border-border-strong bg-bg-primary/60 p-1">
         <input
           type="number"
           min={1}
           max={100}
           value={tickCount}
           onChange={(e) => setTickCount(Math.max(1, parseInt(e.target.value) || 1))}
-          className="w-14 rounded bg-transparent px-2 py-1 text-center text-sm text-text-primary focus:outline-none"
+          className="w-14 bg-transparent px-2 py-1 text-center text-sm text-text-primary focus:outline-none border-0"
         />
         <button
           onClick={handleManualTick}
           disabled={loading}
           className="btn-primary !py-1 !px-3 text-xs disabled:opacity-50"
         >
-          {loading ? "..." : "수동 틱"}
+          {loading ? "..." : t('manual')}
         </button>
       </div>
       <button
         onClick={handleAutoTick}
         disabled={loading}
-        className="btn-ghost !py-1 !px-3 text-xs border border-border disabled:opacity-50"
+        className="btn-ghost !py-1 !px-3 text-xs border-3 border-border-strong disabled:opacity-50"
       >
-        자동 틱
+        {t('auto')}
       </button>
     </div>
   )

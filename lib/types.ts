@@ -13,8 +13,21 @@ export interface Memory {
   speaker?: string
 }
 
-export interface SearchResult extends Memory {
+// SearchResult matches what the /search API actually returns
+export interface SearchResult {
+  id: string
+  text: string
   score: number
+  storage_score: number
+  retrieval_score: number
+  category: string
+  mtype: string
+  created_tick: number
+  speaker?: string
+  importance?: number
+  stability?: number
+  freshness?: number
+  associations?: string[]
 }
 
 export interface SystemStats {
@@ -63,9 +76,9 @@ export function getFreshnessStatus(freshness: number): FreshnessStatus {
 
 export function getFreshnessLabel(status: FreshnessStatus): string {
   switch (status) {
-    case "fresh": return "types.freshness.fresh"
-    case "normal": return "types.freshness.normal"
-    case "stale": return "types.freshness.stale"
+    case "fresh": return "freshness.fresh"
+    case "normal": return "freshness.normal"
+    case "stale": return "freshness.stale"
   }
 }
 
@@ -105,18 +118,10 @@ export interface ActivationRecord {
 // ── Shared UI Constants ────────────────────────────────────
 
 export const MTYPE_LABELS: Record<string, string> = {
-  fact: "types.memoryType.fact",
-  episode: "types.memoryType.episode",
-  decision: "types.memoryType.decision",
-  preference: "types.memoryType.preference",
-}
-
-export const CHART_TOOLTIP_STYLE = {
-  background: "#151821",
-  border: "1px solid #263042",
-  borderRadius: 8,
-  fontSize: 12,
-  color: "#f8fafc",
+  fact: "memoryType.fact",
+  episode: "memoryType.episode",
+  decision: "memoryType.decision",
+  preference: "memoryType.preference",
 }
 
 // ── Decay Params (Feature 2) ────────────────────────────────
@@ -172,42 +177,42 @@ export interface DecayParamMeta {
 
 export const DECAY_PARAM_GROUPS: { label: string; group: DecayParamMeta["group"]; params: DecayParamMeta[] }[] = [
   {
-    label: "types.decayParamGroup.basic",
+    label: "decayParamGroup.basic",
     group: "basic",
     params: [
-      { key: "lambda_fact", label: "types.decayParam.lambda_fact", group: "basic", min: 0.001, max: 0.1, step: 0.001 },
-      { key: "lambda_episode", label: "types.decayParam.lambda_episode", group: "basic", min: 0.001, max: 0.1, step: 0.001 },
-      { key: "alpha", label: "types.decayParam.alpha", group: "basic", min: 0.0, max: 2.0, step: 0.05 },
+      { key: "lambda_fact", label: "decayParam.lambda_fact", group: "basic", min: 0.001, max: 0.1, step: 0.001 },
+      { key: "lambda_episode", label: "decayParam.lambda_episode", group: "basic", min: 0.001, max: 0.1, step: 0.001 },
+      { key: "alpha", label: "decayParam.alpha", group: "basic", min: 0.0, max: 2.0, step: 0.05 },
     ],
   },
   {
-    label: "types.decayParamGroup.stability",
+    label: "decayParamGroup.stability",
     group: "stability",
     params: [
-      { key: "stability_weight", label: "types.decayParam.stability_weight", group: "stability", min: 0.0, max: 2.0, step: 0.05 },
-      { key: "stability_decay", label: "types.decayParam.stability_decay", group: "stability", min: 0.0, max: 0.1, step: 0.005 },
-      { key: "stability_cap", label: "types.decayParam.stability_cap", group: "stability", min: 0.5, max: 2.0, step: 0.1 },
+      { key: "stability_weight", label: "decayParam.stability_weight", group: "stability", min: 0.0, max: 2.0, step: 0.05 },
+      { key: "stability_decay", label: "decayParam.stability_decay", group: "stability", min: 0.0, max: 0.1, step: 0.005 },
+      { key: "stability_cap", label: "decayParam.stability_cap", group: "stability", min: 0.5, max: 2.0, step: 0.1 },
     ],
   },
   {
-    label: "types.decayParamGroup.reinforcement",
+    label: "decayParamGroup.reinforcement",
     group: "reinforcement",
     params: [
-      { key: "reinforcement_gain_direct", label: "types.decayParam.reinforcement_gain_direct", group: "reinforcement", min: 0.0, max: 1.0, step: 0.01 },
-      { key: "reinforcement_gain_assoc", label: "types.decayParam.reinforcement_gain_assoc", group: "reinforcement", min: 0.0, max: 0.5, step: 0.01 },
-      { key: "consolidation_gain", label: "types.decayParam.consolidation_gain", group: "reinforcement", min: 0.0, max: 1.0, step: 0.05 },
+      { key: "reinforcement_gain_direct", label: "decayParam.reinforcement_gain_direct", group: "reinforcement", min: 0.0, max: 1.0, step: 0.01 },
+      { key: "reinforcement_gain_assoc", label: "decayParam.reinforcement_gain_assoc", group: "reinforcement", min: 0.0, max: 0.5, step: 0.01 },
+      { key: "consolidation_gain", label: "decayParam.consolidation_gain", group: "reinforcement", min: 0.0, max: 1.0, step: 0.05 },
     ],
   },
   {
-    label: "types.decayParamGroup.soft_floor",
+    label: "decayParamGroup.soft_floor",
     group: "soft_floor",
     params: [
-      { key: "floor_min", label: "types.decayParam.floor_min", group: "soft_floor", min: 0.0, max: 0.2, step: 0.01 },
-      { key: "floor_max", label: "types.decayParam.floor_max", group: "soft_floor", min: 0.1, max: 0.5, step: 0.01 },
-      { key: "floor_power", label: "types.decayParam.floor_power", group: "soft_floor", min: 0.5, max: 5.0, step: 0.1 },
-      { key: "gate_center", label: "types.decayParam.gate_center", group: "soft_floor", min: 0.0, max: 1.0, step: 0.05 },
-      { key: "gate_width", label: "types.decayParam.gate_width", group: "soft_floor", min: 0.01, max: 0.5, step: 0.01 },
-      { key: "min_rate_scale", label: "types.decayParam.min_rate_scale", group: "soft_floor", min: 0.0, max: 0.5, step: 0.01 },
+      { key: "floor_min", label: "decayParam.floor_min", group: "soft_floor", min: 0.0, max: 0.2, step: 0.01 },
+      { key: "floor_max", label: "decayParam.floor_max", group: "soft_floor", min: 0.1, max: 0.5, step: 0.01 },
+      { key: "floor_power", label: "decayParam.floor_power", group: "soft_floor", min: 0.5, max: 5.0, step: 0.1 },
+      { key: "gate_center", label: "decayParam.gate_center", group: "soft_floor", min: 0.0, max: 1.0, step: 0.05 },
+      { key: "gate_width", label: "decayParam.gate_width", group: "soft_floor", min: 0.01, max: 0.5, step: 0.01 },
+      { key: "min_rate_scale", label: "decayParam.min_rate_scale", group: "soft_floor", min: 0.0, max: 0.5, step: 0.01 },
     ],
   },
 ]

@@ -82,7 +82,7 @@ export default function AdminPage() {
 
       {/* Status message */}
       {status && (
-        <div className="rounded-lg border border-border bg-bg-elevated/80 px-4 py-3 text-sm text-text-secondary">
+        <div className="rounded border border-border bg-bg-elevated/80 px-4 py-3 text-sm text-text-secondary">
           {status}
         </div>
       )}

@@ -19,6 +19,8 @@ export default function ParamEditor() {
       setParams(p)
       setSaved(p)
       setLoading(false)
+    }).catch(() => {
+      setLoading(false)
     })
   }, [])
 
@@ -57,14 +59,14 @@ export default function ParamEditor() {
   return (
     <div className="space-y-5">
       {message && (
-        <div className={`rounded-lg px-4 py-2 text-sm ${message.type === "ok" ? "bg-accent-secondary/10 text-accent-secondary" : "bg-red-500/10 text-red-400"}`}>
+        <div className={`px-4 py-2 text-sm ${message.type === "ok" ? "bg-accent-secondary/10 text-accent-secondary" : "bg-red-500/10 text-red-400"}`}>
           {message.text}
         </div>
       )}
 
       {DECAY_PARAM_GROUPS.map(group => (
         <details key={group.group} open={group.group === "basic"} className="panel overflow-hidden">
-          <summary className="cursor-pointer select-none px-5 py-3 text-sm font-semibold text-text-primary hover:bg-bg-elevated/40 transition-colors">
+          <summary className="cursor-pointer select-none px-5 py-3 text-sm font-semibold text-text-primary hover:bg-bg-elevated/40">
             {tTypes(group.label)}
           </summary>
           <div className="space-y-4 px-5 pb-5 pt-2">
@@ -91,7 +93,7 @@ export default function ParamEditor() {
         )}
         <button onClick={handleReset} className="btn-secondary ml-auto">{t('resetDefaults')}</button>
         {dirty && (
-          <span className="rounded-full bg-accent/20 px-2 py-0.5 text-[10px] font-medium text-accent">
+          <span className="bg-accent/20 px-2 py-0.5 text-[10px] font-medium text-accent">
             {t('changed')}
           </span>
         )}
@@ -116,7 +118,7 @@ function ParamRow({ meta, value, onChange, label }: { meta: DecayParamMeta; valu
             if (!isNaN(v)) onChange(Math.min(meta.max, Math.max(meta.min, v)))
           }}
           onBlur={() => onChange(Math.min(meta.max, Math.max(meta.min, value)))}
-          className="w-20 rounded border border-border bg-bg-primary px-2 py-1 text-right font-mono text-xs text-text-primary focus:border-accent focus:outline-none"
+          className="w-20 border-3 border-border-strong bg-bg-primary px-2 py-1 text-right font-mono text-xs text-text-primary focus:border-accent focus:outline-none"
         />
       </div>
       <input

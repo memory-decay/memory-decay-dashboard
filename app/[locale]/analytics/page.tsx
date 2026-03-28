@@ -7,11 +7,10 @@ import {
 } from "recharts"
 import { useTranslations } from "next-intl"
 import { getAllMemories, getHistorySummary } from "@/lib/api"
-import { Memory, HistorySummary, getFreshnessStatus, MTYPE_LABELS, CHART_TOOLTIP_STYLE } from "@/lib/types"
+import { Memory, HistorySummary, getFreshnessStatus, MTYPE_LABELS } from "@/lib/types"
+import { useChartColors, getChartTooltipStyle, withAlpha } from "@/lib/theme-colors"
 import Link from "next/link"
 import StatusBadge from "@/components/status-badge"
-
-const PIE_COLORS = ["#7c9cff", "#49dcb1", "#f5a65b", "#f87171"]
 
 function buildHistogram(memories: Memory[]): { range: string; count: number }[] {
   const buckets = Array.from({ length: 10 }, (_, i) => ({
@@ -36,6 +35,8 @@ function buildCategoryCounts(memories: Memory[]): { name: string; value: number 
 
 export default function AnalyticsPage() {
   const t = useTranslations('page.analytics')
+  const colors = useChartColors()
+  const PIE_COLORS = [colors.accent, colors.accentSecondary, colors.accentWarm, colors.danger]
   const [memories, setMemories] = useState<Memory[]>([])
   const [history, setHistory] = useState<HistorySummary | null>(null)
   const [loading, setLoading] = useState(true)
@@ -66,20 +67,20 @@ export default function AnalyticsPage() {
       </div>
 
       {/* ── Time-Series: System Timeline ──────────────────────── */}
-      {history && history.timeline.length > 0 && (
+      {history && history.timeline && history.timeline.length > 0 && (
         <div className="grid gap-6 lg:grid-cols-2">
           {/* Average activation over time */}
           <div className="chart-section">
             <div className="label mb-3">{t('systemActivationTrend')}</div>
             <ResponsiveContainer width="100%" height={260}>
               <LineChart data={history.timeline} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#263042" />
-                <XAxis dataKey="tick" stroke="#70809c" fontSize={10} tickLine={false} />
-                <YAxis stroke="#70809c" fontSize={11} tickLine={false} domain={[0, 1]} />
-                <Tooltip contentStyle={CHART_TOOLTIP_STYLE} />
-                <Legend wrapperStyle={{ fontSize: 11, color: "#70809c" }} />
-                <Line type="monotone" dataKey="avg_retrieval" stroke="#7c9cff" strokeWidth={2} dot={false} name={t('avgRetrieval')} />
-                <Line type="monotone" dataKey="avg_storage" stroke="#49dcb1" strokeWidth={2} dot={false} name={t('avgStorage')} />
+                <CartesianGrid strokeDasharray="3 3" stroke={colors.gridLine} />
+                <XAxis dataKey="tick" stroke={colors.textMuted} fontSize={10} tickLine={false} />
+                <YAxis stroke={colors.textMuted} fontSize={11} tickLine={false} domain={[0, 1]} />
+                <Tooltip contentStyle={getChartTooltipStyle(colors)} />
+                <Legend wrapperStyle={{ fontSize: 11, color: colors.textMuted }} />
+                <Line type="monotone" dataKey="avg_retrieval" stroke={colors.accent} strokeWidth={2} dot={false} name={t('avgRetrieval')} />
+                <Line type="monotone" dataKey="avg_storage" stroke={colors.accentSecondary} strokeWidth={2} dot={false} name={t('avgStorage')} />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -89,12 +90,12 @@ export default function AnalyticsPage() {
             <div className="label mb-3">{t('atRiskTrend')}</div>
             <ResponsiveContainer width="100%" height={260}>
               <AreaChart data={history.timeline} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#263042" />
-                <XAxis dataKey="tick" stroke="#70809c" fontSize={10} tickLine={false} />
-                <YAxis stroke="#70809c" fontSize={11} tickLine={false} allowDecimals={false} />
-                <Tooltip contentStyle={CHART_TOOLTIP_STYLE} />
+                <CartesianGrid strokeDasharray="3 3" stroke={colors.gridLine} />
+                <XAxis dataKey="tick" stroke={colors.textMuted} fontSize={10} tickLine={false} />
+                <YAxis stroke={colors.textMuted} fontSize={11} tickLine={false} allowDecimals={false} />
+                <Tooltip contentStyle={getChartTooltipStyle(colors)} />
                 <Area
-                  type="monotone" dataKey="at_risk_count" stroke="#f87171" fill="#f8717120"
+                  type="monotone" dataKey="at_risk_count" stroke={colors.danger} fill={withAlpha(colors.danger, 0.12)}
                   strokeWidth={2} name={t('atRiskCount')}
                 />
               </AreaChart>
@@ -104,7 +105,7 @@ export default function AnalyticsPage() {
       )}
 
       {/* ── Per-category decay comparison ─────────────────────── */}
-      {history && history.categories.length > 0 && (
+      {history && history.categories && history.categories.length > 0 && (
         <div className="chart-section">
           <div className="label mb-3">{t('categoryComparison')}</div>
           <ResponsiveContainer width="100%" height={280}>
@@ -112,14 +113,14 @@ export default function AnalyticsPage() {
               data={history.categories}
               margin={{ top: 5, right: 10, left: 0, bottom: 5 }}
             >
-              <CartesianGrid strokeDasharray="3 3" stroke="#263042" />
-              <XAxis dataKey="category" stroke="#70809c" fontSize={10} tickLine={false} />
-              <YAxis stroke="#70809c" fontSize={11} tickLine={false} domain={[0, 1]} />
-              <Tooltip contentStyle={CHART_TOOLTIP_STYLE} />
-              <Legend wrapperStyle={{ fontSize: 11, color: "#70809c" }} />
-              <Bar dataKey="avg_retrieval" fill="#7c9cff" radius={[3, 3, 0, 0]} name={t('retrievalScore')} />
-              <Bar dataKey="avg_storage" fill="#49dcb1" radius={[3, 3, 0, 0]} name={t('storageScore')} />
-              <Bar dataKey="avg_stability" fill="#f5a65b" radius={[3, 3, 0, 0]} name={t('stability')} />
+              <CartesianGrid strokeDasharray="3 3" stroke={colors.gridLine} />
+              <XAxis dataKey="category" stroke={colors.textMuted} fontSize={10} tickLine={false} />
+              <YAxis stroke={colors.textMuted} fontSize={11} tickLine={false} domain={[0, 1]} />
+              <Tooltip contentStyle={getChartTooltipStyle(colors)} />
+              <Legend wrapperStyle={{ fontSize: 11, color: colors.textMuted }} />
+              <Bar dataKey="avg_retrieval" fill={colors.accent} radius={[3, 3, 0, 0]} name={t('retrievalScore')} />
+              <Bar dataKey="avg_storage" fill={colors.accentSecondary} radius={[3, 3, 0, 0]} name={t('storageScore')} />
+              <Bar dataKey="avg_stability" fill={colors.accentWarm} radius={[3, 3, 0, 0]} name={t('stability')} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -132,11 +133,11 @@ export default function AnalyticsPage() {
           <div className="label mb-3">{t('activationDistribution')}</div>
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={histogram} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#263042" />
-              <XAxis dataKey="range" stroke="#70809c" fontSize={10} tickLine={false} />
-              <YAxis stroke="#70809c" fontSize={11} tickLine={false} allowDecimals={false} />
-              <Tooltip contentStyle={CHART_TOOLTIP_STYLE} />
-              <Bar dataKey="count" fill="#7c9cff" radius={[4, 4, 0, 0]} />
+              <CartesianGrid strokeDasharray="3 3" stroke={colors.gridLine} />
+              <XAxis dataKey="range" stroke={colors.textMuted} fontSize={10} tickLine={false} />
+              <YAxis stroke={colors.textMuted} fontSize={11} tickLine={false} allowDecimals={false} />
+              <Tooltip contentStyle={getChartTooltipStyle(colors)} />
+              <Bar dataKey="count" fill={colors.accent} radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -155,7 +156,7 @@ export default function AnalyticsPage() {
                     <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip contentStyle={CHART_TOOLTIP_STYLE} />
+                <Tooltip contentStyle={getChartTooltipStyle(colors)} />
               </PieChart>
             </ResponsiveContainer>
             <div className="space-y-2">
