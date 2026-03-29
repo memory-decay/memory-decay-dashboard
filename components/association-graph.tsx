@@ -3,6 +3,7 @@
 import { useRef, useEffect, useState, useCallback, useMemo } from "react"
 import * as d3 from "d3"
 import Link from "next/link"
+import { MousePointerClick } from "lucide-react"
 import { Memory, MTYPE_LABELS } from "@/lib/types"
 import { useChartColors, getScoreColor } from "@/lib/theme-colors"
 import { useTranslations } from "next-intl"
@@ -27,7 +28,8 @@ interface AssociationGraphProps {
 }
 
 export default function AssociationGraph({ memories }: AssociationGraphProps) {
-  const t = useTranslations('search')
+  const t = useTranslations('graph')
+  const tSearch = useTranslations('search')
   const colors = useChartColors()
   const svgRef = useRef<SVGSVGElement>(null)
   const simulationRef = useRef<d3.Simulation<GraphNode, GraphLink> | null>(null)
@@ -36,8 +38,9 @@ export default function AssociationGraph({ memories }: AssociationGraphProps) {
   const [threshold, setThreshold] = useState(0.0)
   const [activeCategories, setActiveCategories] = useState<Set<string>>(() => new Set(memories.map(m => m.category)))
 
-  const allCategories = Array.from(new Set(memories.map(m => m.category)))
-  const filteredMemories = memories.filter(m => activeCategories.has(m.category) && m.retrieval_score >= threshold)
+  // Filter out empty/null/undefined categories
+  const allCategories = Array.from(new Set(memories.map(m => m.category).filter(Boolean)))
+  const filteredMemories = memories.filter(m => m.category && activeCategories.has(m.category) && m.retrieval_score >= threshold)
 
   const toggleCategory = useCallback((cat: string) => {
     setActiveCategories(prev => {
@@ -76,6 +79,18 @@ export default function AssociationGraph({ memories }: AssociationGraphProps) {
   // Stable key for detecting when the node set actually changes
   const nodeSetKey = filteredMemories.map(m => m.id).sort().join(",")
 
+  // Zoom behavior ref
+  const zoomRef = useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null)
+  const transformRef = useRef<d3.ZoomTransform>(d3.zoomIdentity)
+
+  // Reset zoom/pan view
+  const resetView = useCallback(() => {
+    if (!svgRef.current || !zoomRef.current) return
+    const svg = d3.select(svgRef.current)
+    svg.transition().duration(750).call(zoomRef.current.transform as any, d3.zoomIdentity)
+    transformRef.current = d3.zoomIdentity
+  }, [])
+
   // Main simulation effect — only rebuilds when node set changes
   useEffect(() => {
     if (!svgRef.current || graphData.nodes.length === 0) return
@@ -91,15 +106,39 @@ export default function AssociationGraph({ memories }: AssociationGraphProps) {
 
     const { nodes, links } = graphData
 
+    // Create container group for zoom
+    const container = svg.append("g")
+
+    // Zoom behavior
+    const zoom = d3.zoom<SVGSVGElement, unknown>()
+      .scaleExtent([0.1, 4])
+      .on("zoom", (event) => {
+        container.attr("transform", event.transform.toString())
+        transformRef.current = event.transform
+      })
+    
+    zoomRef.current = zoom
+    svg.call(zoom as any)
+
+    // Calculate initial zoom to fit all nodes
+    const initialScale = Math.min(1, Math.min(width / 800, height / 600))
+    const initialTransform = d3.zoomIdentity
+      .translate(width / 2, height / 2)
+      .scale(initialScale)
+      .translate(-width / 2, -height / 2)
+    
+    svg.call(zoom.transform as any, initialTransform)
+    transformRef.current = initialTransform
+
     const simulation = d3.forceSimulation<GraphNode>(nodes)
-      .force("link", d3.forceLink<GraphNode, GraphLink>(links).id((d: GraphNode) => d.id).distance(80))
-      .force("charge", d3.forceManyBody().strength(-200))
+      .force("link", d3.forceLink<GraphNode, GraphLink>(links).id((d: GraphNode) => d.id).distance(60))
+      .force("charge", d3.forceManyBody().strength(-150))
       .force("center", d3.forceCenter(width / 2, height / 2))
-      .force("collision", d3.forceCollide<GraphNode>().radius((d: GraphNode) => 6 + d.importance * 10))
+      .force("collision", d3.forceCollide<GraphNode>().radius((d: GraphNode) => 8 + d.importance * 12))
 
     simulationRef.current = simulation
 
-    const linkSel = svg.append("g")
+    const linkSel = container.append("g")
       .selectAll("line")
       .data(links)
       .join("line")
@@ -107,7 +146,7 @@ export default function AssociationGraph({ memories }: AssociationGraphProps) {
       .attr("stroke-width", 1.5)
       .attr("stroke-opacity", 0.6)
 
-    const nodeSel = svg.append("g")
+    const nodeSel = container.append("g")
       .selectAll<SVGGElement, GraphNode>("g")
       .data(nodes)
       .join("g")
@@ -218,7 +257,7 @@ export default function AssociationGraph({ memories }: AssociationGraphProps) {
         <div className="flex-1 min-w-[200px] max-w-sm">
           <input
             type="text"
-            placeholder={t('placeholder')}
+            placeholder={tSearch('placeholder')}
             value={highlight}
             onChange={e => setHighlight(e.target.value)}
             className="input-field text-sm"
@@ -234,23 +273,40 @@ export default function AssociationGraph({ memories }: AssociationGraphProps) {
           />
           <span className="font-mono w-8">{threshold.toFixed(2)}</span>
         </div>
+        <button onClick={resetView} className="btn-secondary text-xs py-1 px-3">
+          {t('resetView')}
+        </button>
+      </div>
+      
+      {/* Zoom/Pan hint */}
+      <div className="text-[10px] text-text-muted">
+        {t('zoomHint')}
       </div>
 
       {/* Category filters */}
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-xs text-text-muted font-medium">{t('categoryFilter')}:</span>
         {allCategories.map(cat => (
           <button
             key={cat}
             onClick={() => toggleCategory(cat)}
-            className={`rounded-full px-3 py-1 text-xs transition-colors ${
+            className={`text-xs font-medium px-3 py-1.5 border rounded-md transition-all duration-200 ${
               activeCategories.has(cat)
-                ? "bg-accent/20 text-accent border border-accent/30"
-                : "bg-bg-elevated/60 text-text-muted border border-border"
+                ? "bg-accent text-text-inverse border-accent shadow-sm"
+                : "bg-surface-1 text-text-muted border-border/60 hover:border-accent/50 hover:bg-surface-2"
             }`}
           >
             {cat}
           </button>
         ))}
+        {allCategories.length > 1 && (
+          <button
+            onClick={() => setActiveCategories(new Set(allCategories))}
+            className="text-xs text-accent hover:text-accent-secondary hover:underline ml-2 transition-colors duration-200"
+          >
+            {t('selectAll')}
+          </button>
+        )}
       </div>
 
       {/* Graph + Detail Panel */}
@@ -284,16 +340,59 @@ export default function AssociationGraph({ memories }: AssociationGraphProps) {
             </Link>
           </div>
         ) : (
-          <div className="panel p-4">
-            <div className="text-xs text-text-muted leading-relaxed">
-              노드를 클릭하면 상세 정보가 표시됩니다.
-              <br /><br />
-              <span className="text-text-secondary">노드 색상:</span><br />
-              <span className="inline-block ml-1 w-2 h-2 rounded-full bg-accent-secondary" /> 높음{" "}
-              <span className="inline-block ml-1 w-2 h-2 rounded-full bg-accent-warm" /> 보통{" "}
-              <span className="inline-block ml-1 w-2 h-2 rounded-full bg-status-danger" /> 낮음
-              <br />
-              <span className="text-text-secondary">크기 = 중요도, 드래그 가능</span>
+          <div className="panel p-4 space-y-4">
+            {/* Header */}
+            <div className="flex items-center gap-2">
+              <MousePointerClick size={16} className="text-accent" />
+              <span className="text-xs text-text-secondary font-bold uppercase tracking-wider">{t('instructions.title')}</span>
+            </div>
+            
+            {/* Instructions */}
+            <div className="text-xs text-text-muted space-y-2">
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-surface-2 text-[10px] font-bold">1</span>
+                <span>{t('instructions.step1')}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-surface-2 text-[10px] font-bold">2</span>
+                <span>{t('instructions.step2')}</span>
+              </div>
+            </div>
+
+            {/* Legend - Node Colors */}
+            <div className="border-t-2 border-border pt-3">
+              <div className="text-[10px] text-text-muted uppercase font-bold tracking-wider mb-2">{t('instructions.nodeColor')}</div>
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-2">
+                  <span className="inline-block w-3 h-3 rounded-full bg-accent-secondary border border-border" />
+                  <span className="text-xs text-text-secondary">{t('instructions.high')}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="inline-block w-3 h-3 rounded-full bg-accent-warm border border-border" />
+                  <span className="text-xs text-text-secondary">{t('instructions.medium')}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="inline-block w-3 h-3 rounded-full bg-status-danger border border-border" />
+                  <span className="text-xs text-text-secondary">{t('instructions.low')}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Legend - Node Size */}
+            <div className="border-t-2 border-border pt-3">
+              <div className="text-[10px] text-text-muted uppercase font-bold tracking-wider mb-2">{t('instructions.nodeSize')}</div>
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1">
+                  <span className="inline-block w-2 h-2 rounded-full bg-text-muted" />
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="inline-block w-3 h-3 rounded-full bg-text-muted" />
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="inline-block w-4 h-4 rounded-full bg-text-muted" />
+                </div>
+              </div>
+              <div className="text-[10px] text-text-muted mt-1">{t('instructions.sizeDesc')}</div>
             </div>
           </div>
         )}

@@ -104,9 +104,9 @@ export default function ParamEditor() {
 
 function ParamRow({ meta, value, onChange, label }: { meta: DecayParamMeta; value: number; onChange: (v: number) => void; label: string }) {
   return (
-    <div className="space-y-1">
+    <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <label className="text-xs text-text-secondary">{label}</label>
+        <label className="text-xs text-text-secondary font-medium">{label}</label>
         <input
           type="number"
           min={meta.min}
@@ -118,7 +118,7 @@ function ParamRow({ meta, value, onChange, label }: { meta: DecayParamMeta; valu
             if (!isNaN(v)) onChange(Math.min(meta.max, Math.max(meta.min, v)))
           }}
           onBlur={() => onChange(Math.min(meta.max, Math.max(meta.min, value)))}
-          className="w-20 border-3 border-border-strong bg-bg-primary px-2 py-1 text-right font-mono text-xs text-text-primary focus:border-accent focus:outline-none"
+          className="w-20 border-2 border-border bg-bg-surface rounded px-2 py-1 text-right font-mono text-xs text-text-primary focus:border-accent focus:outline-none transition-colors duration-200"
         />
       </div>
       <input
@@ -128,7 +128,7 @@ function ParamRow({ meta, value, onChange, label }: { meta: DecayParamMeta; valu
         step={meta.step}
         value={value}
         onChange={e => onChange(parseFloat(e.target.value))}
-        className="w-full accent-accent h-1.5"
+        className="w-full accent-accent h-1.5 rounded-full"
       />
     </div>
   )

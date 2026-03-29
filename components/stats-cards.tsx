@@ -94,15 +94,15 @@ export default function StatsCards({ stats, memories }: StatsCardsProps) {
         return (
           <div
             key={item.key}
-            className={`stat-card group transition-all hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5 border-3 ${item.borderAccent}`}
+            className={`stat-card group border-2 ${item.borderAccent}`}
           >
-            <div className={`flex items-center gap-2 mb-2 pb-2 border-b-2 ${item.borderAccent} ${item.headerBg}`}>
-              <div className={`flex h-7 w-7 items-center justify-center ${item.bgAccent} border-2 ${item.borderAccent}`}>
-                <Icon size={14} className={item.accent} strokeWidth={2.5} />
+            <div className={`flex items-center gap-2 mb-2 pb-2 border-b ${item.borderAccent} ${item.headerBg} rounded-t-md`}>
+              <div className={`flex h-7 w-7 items-center justify-center rounded-md ${item.bgAccent} border ${item.borderAccent}`}>
+                <Icon size={14} className={item.accent} strokeWidth={2} />
               </div>
-              <div className="label">{t(item.key)}</div>
+              <div className="text-xs font-semibold text-text-secondary">{t(item.key)}</div>
             </div>
-            <div className={`text-2xl font-black ${item.accent}`}>
+            <div className={`text-2xl font-bold ${item.accent}`}>
               {value.toLocaleString()}
             </div>
           </div>

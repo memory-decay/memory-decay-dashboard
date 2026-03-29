@@ -135,11 +135,12 @@
   --status-stable: 0, 255, 102;    /* Electric green #00FF66 */
 
   /*
-   * SHADOWS — Hard offset, brutalist signature
+   * SHADOWS — Moderate brutalist: soft layered shadows
    */
-  --shadow-panel: 4px 4px 0px 0px rgb(0 0 0 / 0.95);
-  --shadow-hard: 6px 6px 0px 0px rgb(0 0 0 / 1);
-  --shadow-sm: 3px 3px 0px 0px rgb(0 0 0 / 0.9);
+  --shadow-panel: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.2);
+  --shadow-hard: 0 10px 15px -3px rgb(0 0 0 / 0.35), 0 4px 6px -4px rgb(0 0 0 / 0.25);
+  --shadow-sm: 0 1px 3px 0px rgb(0 0 0 / 0.25), 0 1px 2px -1px rgb(0 0 0 / 0.2);
+  --shadow-hover: 0 8px 12px -2px rgb(0 0 0 / 0.35), 0 4px 6px -3px rgb(0 0 0 / 0.25);
 }
 
 [data-theme="light"] {
@@ -272,11 +273,12 @@
   --status-stable: 22, 163, 74;    /* Green #16A34A (5.4:1) */
 
   /*
-   * SHADOWS — Hard shadows work in light mode too
+   * SHADOWS — Moderate brutalist: soft layered shadows for light mode
    */
-  --shadow-panel: 4px 4px 0px 0px rgb(0 0 0 / 0.9);
-  --shadow-hard: 6px 6px 0px 0px rgb(0 0 0 / 1);
-  --shadow-sm: 3px 3px 0px 0px rgb(0 0 0 / 0.85);
+  --shadow-panel: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.08);
+  --shadow-hard: 0 10px 15px -3px rgb(0 0 0 / 0.12), 0 4px 6px -4px rgb(0 0 0 / 0.08);
+  --shadow-sm: 0 1px 3px 0px rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.06);
+  --shadow-hover: 0 8px 12px -2px rgb(0 0 0 / 0.12), 0 4px 6px -3px rgb(0 0 0 / 0.08);
 }
 
 * {
@@ -310,15 +312,21 @@ body {
 
   /* Panel — the foundation of brutalist UI */
   .panel {
-    border: 3px solid rgb(var(--border));
+    border: 2px solid rgb(var(--border));
     background: rgb(var(--bg-surface));
     box-shadow: var(--shadow-panel);
-    border-radius: 0;
+    border-radius: 0.375rem;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+  
+  .panel:hover {
+    box-shadow: var(--shadow-hover);
   }
 
   .panel-glow {
     box-shadow: var(--shadow-panel);
-    border: 3px solid rgb(var(--border));
+    border: 2px solid rgb(var(--border));
+    border-radius: 0.375rem;
   }
 
   /* Surface elevation utilities */
@@ -335,37 +343,49 @@ body {
 
   /* Stat Card — data display with brutalist framing */
   .stat-card {
-    border: 3px solid rgb(var(--border));
+    border: 2px solid rgb(var(--border));
     background: rgb(var(--bg-surface));
     padding: 1rem;
     box-shadow: var(--shadow-panel);
-    border-radius: 0;
+    border-radius: 0.5rem;
+    transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+  }
+  
+  .stat-card:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
   }
 
   /* Chart Section — visualizations with brutalist borders */
   .chart-section {
-    border: 3px solid rgb(var(--border));
+    border: 2px solid rgb(var(--border));
     background: rgb(var(--bg-surface));
     padding: 1.25rem;
     box-shadow: var(--shadow-panel);
-    border-radius: 0;
+    border-radius: 0.5rem;
     overflow: hidden;
     position: relative;
+    transition: box-shadow 0.2s ease;
+  }
+  
+  .chart-section:hover {
+    box-shadow: var(--shadow-hover);
   }
 
   /* Memory Row — list items with electric hover */
   .memory-row {
     width: 100%;
-    border-bottom: 2px solid rgb(var(--border));
+    border-bottom: 1px solid rgb(var(--border) / 0.5);
     background: transparent;
     padding: 1rem;
     text-align: left;
-    transition: none;
+    transition: all 0.2s ease;
+    border-radius: 0.25rem;
   }
 
   .memory-row:hover {
     background: rgb(var(--bg-elevated));
-    box-shadow: inset 4px 0 0 rgb(var(--accent));
+    box-shadow: inset 3px 0 0 rgb(var(--accent));
   }
 
   .memory-row:last-child {
@@ -373,11 +393,73 @@ body {
   }
 
   .memory-row-active {
-    background: rgb(var(--accent) / 0.12);
-    border-left: 4px solid rgb(var(--accent));
-    border-right: 4px solid rgb(var(--accent-warm));
-    border-top: 2px solid rgb(var(--border));
-    border-bottom: 2px solid rgb(var(--border));
+    background: rgb(var(--accent) / 0.1);
+    border-left: 3px solid rgb(var(--accent));
+    border-right: 2px solid rgb(var(--accent-warm));
+    border-top: 1px solid rgb(var(--border));
+    border-bottom: 1px solid rgb(var(--border));
+  }
+
+  /* Icon buttons — shared shells for utility and nav controls */
+  .icon-button {
+    display: flex;
+    height: 44px;
+    width: 44px;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid rgb(var(--border-strong));
+    background: rgb(var(--bg-elevated));
+    color: rgb(var(--text-secondary));
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    border-radius: 0.375rem;
+    transition: all 0.2s ease;
+  }
+
+  .icon-button:hover {
+    background: rgb(var(--surface-hover));
+    color: rgb(var(--accent));
+    box-shadow: var(--shadow-hard);
+    transform: translateY(-2px);
+  }
+
+  .icon-button:active {
+    box-shadow: var(--shadow-sm);
+    transform: translateY(0);
+  }
+
+  html[data-theme="light"] .icon-button {
+    background: rgb(var(--surface-2));
+    color: rgb(var(--text-primary));
+  }
+
+  html[data-theme="light"] .icon-button:hover {
+    background: rgb(var(--surface-3));
+  }
+
+  .nav-icon-shell {
+    display: flex;
+    height: 44px;
+    width: 44px;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid transparent;
+    background: transparent;
+    color: inherit;
+    border-radius: 0.375rem;
+    transition: all 0.2s ease;
+  }
+
+  html[data-theme="light"] .nav-icon-shell {
+    border-color: rgb(var(--border));
+    background: rgb(var(--surface-2));
+    color: rgb(var(--text-primary));
+  }
+
+  html[data-theme="light"] .group:hover .nav-icon-shell {
+    background: rgb(var(--surface-3));
+    color: rgb(var(--accent));
   }
 
   /* Button Primary — accent color background */
@@ -386,26 +468,26 @@ body {
     color: rgb(var(--text-inverse));
     padding: 0.5rem 1rem;
     font-size: 0.875rem;
-    font-weight: 800;
-    border: 3px solid rgb(var(--border-strong));
+    font-weight: 700;
+    border: 2px solid rgb(var(--border-strong));
     box-shadow: var(--shadow-sm);
-    border-radius: 0;
+    border-radius: 0.375rem;
     cursor: pointer;
-    transition: none;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    transition: all 0.2s ease;
+    letter-spacing: 0.02em;
   }
 
   .btn-primary:hover {
-    background: rgb(var(--accent-yellow));
-    color: rgb(0 0 0);
+    background: rgb(var(--accent));
+    filter: brightness(1.1);
     box-shadow: var(--shadow-hard);
-    transform: translate(-2px, -2px);
+    transform: translateY(-2px);
   }
 
   .btn-primary:active {
-    box-shadow: none;
-    transform: translate(0, 0);
+    box-shadow: var(--shadow-sm);
+    transform: translateY(0);
+    filter: brightness(0.95);
   }
 
   /* Button Secondary — elevated surface with purple accent */
@@ -414,26 +496,25 @@ body {
     color: rgb(var(--text-primary));
     padding: 0.5rem 1rem;
     font-size: 0.875rem;
-    font-weight: 800;
-    border: 3px solid rgb(var(--accent-secondary));
+    font-weight: 600;
+    border: 2px solid rgb(var(--accent-secondary));
     box-shadow: var(--shadow-sm);
-    border-radius: 0;
+    border-radius: 0.375rem;
     cursor: pointer;
-    transition: none;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    transition: all 0.2s ease;
+    letter-spacing: 0.02em;
   }
 
   .btn-secondary:hover {
     background: rgb(var(--accent-secondary));
     color: rgb(255 255 255);
     box-shadow: var(--shadow-hard);
-    transform: translate(-2px, -2px);
+    transform: translateY(-2px);
   }
 
   .btn-secondary:active {
-    box-shadow: none;
-    transform: translate(0, 0);
+    box-shadow: var(--shadow-sm);
+    transform: translateY(0);
   }
 
   html[data-theme="light"] .btn-primary,
@@ -447,25 +528,26 @@ body {
     color: rgb(255 255 255);
     padding: 0.5rem 1rem;
     font-size: 0.875rem;
-    font-weight: 800;
-    border: 3px solid rgb(var(--status-danger));
+    font-weight: 600;
+    border: 2px solid rgb(var(--status-danger));
     box-shadow: var(--shadow-sm);
-    border-radius: 0;
+    border-radius: 0.375rem;
     cursor: pointer;
-    transition: none;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    transition: all 0.2s ease;
+    letter-spacing: 0.02em;
   }
 
   .btn-danger:hover {
-    background: rgb(255 40 80);
+    background: rgb(var(--status-danger));
+    filter: brightness(1.1);
     box-shadow: var(--shadow-hard);
-    transform: translate(-2px, -2px);
+    transform: translateY(-2px);
   }
 
   .btn-danger:active {
-    box-shadow: none;
-    transform: translate(0, 0);
+    box-shadow: var(--shadow-sm);
+    transform: translateY(0);
+    filter: brightness(0.95);
   }
 
   /* Button Ghost — transparent with accent border */
@@ -474,25 +556,25 @@ body {
     color: rgb(var(--text-primary));
     padding: 0.5rem 1rem;
     font-size: 0.875rem;
-    font-weight: 700;
-    border: 3px solid rgb(var(--border));
+    font-weight: 600;
+    border: 2px solid rgb(var(--border));
     box-shadow: var(--shadow-sm);
-    border-radius: 0;
+    border-radius: 0.375rem;
     cursor: pointer;
-    transition: none;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    transition: all 0.2s ease;
+    letter-spacing: 0.02em;
   }
 
   .btn-ghost:hover {
     background: rgb(var(--bg-elevated));
     box-shadow: var(--shadow-hard);
-    transform: translate(-2px, -2px);
+    transform: translateY(-2px);
+    border-color: rgb(var(--accent));
   }
 
   .btn-ghost:active {
-    box-shadow: none;
-    transform: translate(0, 0);
+    box-shadow: var(--shadow-sm);
+    transform: translateY(0);
   }
 
   /* Input Field — stark borders, accent focus */
@@ -502,12 +584,12 @@ body {
     font-size: 0.875rem;
     color: rgb(var(--text-primary));
     background: rgb(var(--bg-surface));
-    border: 3px solid rgb(var(--border));
+    border: 2px solid rgb(var(--border));
     box-shadow: var(--shadow-sm);
-    border-radius: 0;
+    border-radius: 0.375rem;
     outline: none;
     font-family: inherit;
-    transition: none;
+    transition: all 0.2s ease;
   }
 
   .input-field::placeholder {
@@ -516,7 +598,7 @@ body {
 
   .input-field:focus {
     border-color: rgb(var(--accent));
-    box-shadow: var(--shadow-hard);
+    box-shadow: 0 0 0 3px rgb(var(--accent) / 0.15), var(--shadow-hard);
     background: rgb(var(--bg-elevated));
   }
 
@@ -533,11 +615,10 @@ body {
     padding: 0.75rem 1rem;
     text-align: left;
     font-size: 0.75rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
+    font-weight: 700;
+    letter-spacing: 0.05em;
     color: rgb(var(--text-secondary));
-    border-bottom: 3px solid rgb(var(--border));
+    border-bottom: 2px solid rgb(var(--border));
     background: rgb(var(--bg-elevated));
   }
 
@@ -545,7 +626,8 @@ body {
     padding: 0.75rem 1rem;
     font-size: 0.875rem;
     color: rgb(var(--text-primary));
-    border-bottom: 2px solid rgb(var(--border));
+    border-bottom: 1px solid rgb(var(--border) / 0.5);
+    transition: background-color 0.15s ease;
   }
 
   /* Status badges — vivid color coding with semantic scales */

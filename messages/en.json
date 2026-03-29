@@ -81,6 +81,12 @@
     "ko": "한국어",
     "en": "English"
   },
+  "themeToggle": {
+    "dark": "Dark",
+    "light": "Light",
+    "switchToDark": "Switch to dark mode",
+    "switchToLight": "Switch to light mode"
+  },
   "page": {
     "dashboard": {
       "title": "Dashboard",
@@ -120,7 +126,22 @@
   "graph": {
     "title": "Association Graph",
     "subtitle": "Visualization of memory associations",
-    "loading": "Loading graph..."
+    "loading": "Loading graph...",
+    "resetView": "Reset View",
+    "zoomHint": "💡 Scroll to zoom, drag background to pan, drag nodes to reposition",
+    "categoryFilter": "Category Filter",
+    "selectAll": "Select All",
+    "instructions": {
+      "title": "How to Use",
+      "step1": "Click a node to view details",
+      "step2": "Drag nodes to reposition",
+      "nodeColor": "Node Color (Retrieval Score)",
+      "high": "High (&gt;0.7)",
+      "medium": "Medium (0.3-0.7)",
+      "low": "Low (&lt;0.3)",
+      "nodeSize": "Node Size",
+      "sizeDesc": "Size = Importance"
+    }
   },
   "memory": {
     "title": "Memory Detail",
@@ -193,6 +214,10 @@
     "xAxis": "Tick",
     "activation": "Activation",
     "tick": "Tick",
-    "threshold": "Forgetting Threshold"
+    "threshold": "Forgetting Threshold",
+    "formula": "Decay Formula: A(t+1) = A(t) × exp(-λeff)",
+    "formulaDetail": "λeff = λ / ((1 + α × Importance) × (1 + ρ × Stability))",
+    "params": "λ=0.1 (base), α=0.5 (importance weight), ρ=0.3 (stability weight)",
+    "markers": "Red dot = forgetting point (~0.01), Purple dot = half-life"
   }
 }
