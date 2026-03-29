@@ -135,6 +135,7 @@ const config: Config = {
         "brutal-sm": "var(--shadow-sm)",
         "brutal-lg": "var(--shadow-hard)",
         hard: "var(--shadow-hard)",
+        hover: "var(--shadow-hover)",
       },
       borderWidth: {
         DEFAULT: "1px",

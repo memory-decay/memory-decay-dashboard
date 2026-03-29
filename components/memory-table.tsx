@@ -128,12 +128,12 @@ export default function MemoryTable({ memories }: MemoryTableProps) {
                   className="group transition-all hover:bg-bg-elevated/60 hover:shadow-[inset_4px_0_0_rgb(var(--accent))]"
                 >
                   <td className="table-cell">
-                    <span className={`inline-flex px-2 py-0.5 text-xs font-mono font-bold ${importanceStyle.bg} ${importanceStyle.text} border-2 ${importanceStyle.text.replace('text-', 'border-')}`}>
+                    <span className={`inline-flex px-2 py-0.5 text-xs font-mono font-medium rounded ${importanceStyle.bg} ${importanceStyle.text} border ${importanceStyle.text.replace('text-', 'border-')}`}>
                       {memory.importance.toFixed(2)}
                     </span>
                   </td>
                   <td className="table-cell">
-                    <span className={`inline-flex px-2 py-0.5 text-xs font-mono font-bold ${retrievalStyle.bg} ${retrievalStyle.text} border-2 ${retrievalStyle.text.replace('text-', 'border-')}`}>
+                    <span className={`inline-flex px-2 py-0.5 text-xs font-mono font-medium rounded ${retrievalStyle.bg} ${retrievalStyle.text} border ${retrievalStyle.text.replace('text-', 'border-')}`}>
                       {memory.retrieval_score.toFixed(2)}
                     </span>
                   </td>
@@ -141,15 +141,15 @@ export default function MemoryTable({ memories }: MemoryTableProps) {
                     {memory.created_tick}
                   </td>
                   <td className="table-cell">
-                    <span className="inline-flex bg-bg-elevated px-2 py-0.5 text-xs text-text-secondary border-2 border-border">
-                      {memory.category}
+                    <span className="inline-flex bg-bg-elevated px-2 py-0.5 text-xs text-text-secondary border rounded">
+                      {memory.category || "—"}
                     </span>
                   </td>
                   <td className="table-cell font-mono">
                     {memory.storage_score.toFixed(2)}
                   </td>
                   <td className="table-cell">
-                    <span className={`inline-flex px-2 py-0.5 text-xs font-bold uppercase tracking-wider ${mtypeStyle.bg} ${mtypeStyle.text} border-2 ${mtypeStyle.border}`}>
+                    <span className={`inline-flex px-2 py-0.5 text-xs font-medium rounded ${mtypeStyle.bg} ${mtypeStyle.text} border ${mtypeStyle.border}`}>
                       {tTypes(MTYPE_LABELS[memory.mtype] || memory.mtype)}
                     </span>
                   </td>

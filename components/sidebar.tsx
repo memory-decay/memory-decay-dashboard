@@ -63,16 +63,18 @@ export default function Sidebar() {
   const t = useTranslations()
 
   return (
-    <aside className="fixed left-0 top-0 z-40 flex h-screen w-56 flex-col border-r-[3px] border-border bg-bg-surface backdrop-blur-sm">
+    <aside className="fixed left-0 top-0 z-40 flex h-screen w-56 flex-col border-r-2 border-border bg-bg-surface/80 backdrop-blur-md">
       {/* Logo — with colored background */}
-      <div className="flex items-center justify-between border-b-[3px] border-border-strong px-5 py-4 bg-accent/8">
-        <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center bg-accent text-sm font-black border-[3px] border-accent shadow-brutal-sm">
-            M
-          </div>
-          <div>
-            <div className="text-sm font-black text-text-primary uppercase tracking-tight">Memory Decay</div>
-            <div className="text-[10px] font-bold text-accent uppercase tracking-wider">{t('sidebar.subtitle')}</div>
+      <div className="border-b-2 border-border px-4 py-4 bg-accent/5">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center bg-accent text-sm font-bold text-text-inverse rounded-md border border-accent shadow-sm">
+              M
+            </div>
+            <div>
+              <div className="text-sm font-bold text-text-primary tracking-tight">Memory Decay</div>
+              <div className="text-[10px] font-medium text-accent tracking-wide">{t('sidebar.subtitle')}</div>
+            </div>
           </div>
         </div>
         <ThemeToggle />
@@ -90,14 +92,14 @@ export default function Sidebar() {
             <Link
               key={item.href}
               href={href}
-              className={`flex items-center gap-3 px-3 py-2.5 text-sm transition-all border-[3px] group ${
+              className={`flex items-center gap-3 px-3 py-2.5 text-sm transition-all duration-200 border-2 rounded-lg group ${
                 isActive
-                  ? `${accentStyle.bg} ${accentStyle.text} font-black ${accentStyle.border} shadow-brutal-sm`
-                  : "text-text-secondary hover:bg-bg-elevated hover:text-text-primary border-transparent hover:border-border"
+                  ? `${accentStyle.bg} ${accentStyle.text} font-semibold ${accentStyle.border} shadow-sm`
+                  : "text-text-secondary hover:bg-bg-elevated hover:text-text-primary border-transparent hover:border-border/60"
               }`}
             >
-              <span className={`flex h-[44px] w-[44px] items-center justify-center shrink-0 transition-colors border-2 ${
-                isActive ? `${accentStyle.iconBg} ${accentStyle.border}` : "group-hover:bg-bg-glow border-transparent"
+              <span className={`nav-icon-shell ${
+                isActive ? `${accentStyle.iconBg} ${accentStyle.border}` : "group-hover:bg-bg-glow group-hover:border-border"
               }`}>
                 <Icon
                   size={20}
@@ -105,24 +107,24 @@ export default function Sidebar() {
                   className={isActive ? accentStyle.text : "text-current"}
                 />
               </span>
-              <span className="uppercase tracking-wide text-xs font-bold">{t(item.labelKey)}</span>
+              <span className="text-xs font-medium">{t(item.labelKey)}</span>
             </Link>
           )
         })}
       </nav>
 
       {/* Language Switcher */}
-      <div className="border-t-[3px] border-border px-4 py-3">
+      <div className="border-t-2 border-border px-4 py-3">
         <LanguageSwitcher />
       </div>
 
       {/* Server status */}
-      <div className="border-t-[3px] border-border px-4 py-3 bg-status-stable/5">
-        <div className="flex items-center gap-2 text-xs font-bold text-text-muted uppercase tracking-wider">
-          <span className="inline-block h-2.5 w-2.5 border-[2px] border-status-stable bg-status-stable animate-pulse" />
+      <div className="border-t-2 border-border px-4 py-3 bg-status-stable/5">
+        <div className="flex items-center gap-2 text-xs font-medium text-text-muted">
+          <span className="inline-block h-2 w-2 rounded-full bg-status-stable animate-pulse" />
           {t('sidebar.serverStatus')}
         </div>
-        <div className="mt-1 font-mono text-[10px] font-bold text-accent uppercase">
+        <div className="mt-1 font-mono text-[10px] text-accent">
           localhost:8100
         </div>
       </div>

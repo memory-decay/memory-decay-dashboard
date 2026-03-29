@@ -81,6 +81,12 @@
     "ko": "한국어",
     "en": "English"
   },
+  "themeToggle": {
+    "dark": "다크",
+    "light": "라이트",
+    "switchToDark": "다크 모드로 전환",
+    "switchToLight": "라이트 모드로 전환"
+  },
   "page": {
     "dashboard": {
       "title": "대시보드",
@@ -120,7 +126,22 @@
   "graph": {
     "title": "연관 그래프",
     "subtitle": "메모리 간 연관 관계 시각화",
-    "loading": "그래프 불러오는 중..."
+    "loading": "그래프 불러오는 중...",
+    "resetView": "화면 초기화",
+    "zoomHint": "💡 휠로 줌(확대/축소), 배경 드래그로 이동, 노드 드래그로 위치 조정",
+    "categoryFilter": "카테고리 필터",
+    "selectAll": "전체 선택",
+    "instructions": {
+      "title": "사용 안내",
+      "step1": "노드를 클릭하면 상세 정보가 표시됩니다",
+      "step2": "드래그로 노드 위치를 조정할 수 있습니다",
+      "nodeColor": "노드 색상 (검색 점수)",
+      "high": "높음 (&gt;0.7)",
+      "medium": "보통 (0.3-0.7)",
+      "low": "낮음 (&lt;0.3)",
+      "nodeSize": "노드 크기",
+      "sizeDesc": "크기 = 중요도 (Importance)"
+    }
   },
   "memory": {
     "title": "메모리 상세",
@@ -193,6 +214,10 @@
     "xAxis": "틱",
     "activation": "활성도",
     "tick": "틱",
-    "threshold": "망각 임계값"
+    "threshold": "망각 임계값",
+    "formula": "감쇠 공식: A(t+1) = A(t) × exp(-λeff)",
+    "formulaDetail": "λeff = λ / ((1 + α × 중요도) × (1 + ρ × 안정성))",
+    "params": "λ=0.1 (기본), α=0.5 (중요도 가중치), ρ=0.3 (안정성 가중치)",
+    "markers": "빨간 점 = 망각 시점 (~0.01), 별 점 = 반감기"
   }
 }

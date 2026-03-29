@@ -39,20 +39,20 @@ export default function TickControls({ currentTick, onTickUpdate }: TickControls
 
   return (
     <div className="flex items-center gap-3">
-      <span className="text-xs text-text-muted">{t('label')}</span>
-      <div className="flex items-center gap-1 border-3 border-border-strong bg-bg-primary/60 p-1">
+      <span className="text-xs text-text-muted font-medium">{t('label')}</span>
+      <div className="flex items-center gap-1 border-2 border-border bg-bg-surface rounded-lg p-1 shadow-sm">
         <input
           type="number"
           min={1}
           max={100}
           value={tickCount}
           onChange={(e) => setTickCount(Math.max(1, parseInt(e.target.value) || 1))}
-          className="w-14 bg-transparent px-2 py-1 text-center text-sm text-text-primary focus:outline-none border-0"
+          className="w-14 bg-transparent px-2 py-1 text-center text-sm text-text-primary focus:outline-none border-0 rounded"
         />
         <button
           onClick={handleManualTick}
           disabled={loading}
-          className="btn-primary !py-1 !px-3 text-xs disabled:opacity-50"
+          className="btn-primary !py-1.5 !px-3 text-xs disabled:opacity-50"
         >
           {loading ? "..." : t('manual')}
         </button>
@@ -60,7 +60,7 @@ export default function TickControls({ currentTick, onTickUpdate }: TickControls
       <button
         onClick={handleAutoTick}
         disabled={loading}
-        className="btn-ghost !py-1 !px-3 text-xs border-3 border-border-strong disabled:opacity-50"
+        className="btn-ghost !py-1.5 !px-3 text-xs disabled:opacity-50"
       >
         {t('auto')}
       </button>

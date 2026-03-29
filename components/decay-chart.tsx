@@ -70,6 +70,12 @@ export default function DecayChart({
         </div>
       </div>
 
+      <div className="mb-4 rounded-lg bg-surface-1 border border-border p-3 shadow-sm">
+        <div className="text-xs font-medium text-text-secondary mb-1">{t('formula')}</div>
+        <div className="text-xs text-text-muted font-mono">{t('formulaDetail')}</div>
+        <div className="text-xs text-text-muted mt-1.5">{t('params')}</div>
+      </div>
+
       <ResponsiveContainer width="100%" height={240}>
         <AreaChart data={data} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
           <defs>
@@ -166,6 +172,11 @@ export default function DecayChart({
           />
         </AreaChart>
       </ResponsiveContainer>
+
+      <div className="mt-3 flex items-center gap-2 text-[10px] text-text-muted">
+        <span className="inline-block w-2 h-2 rounded-full bg-status-danger" />
+        <span>{t('markers')}</span>
+      </div>
     </div>
   )
 }
