@@ -1,7 +1,9 @@
 {
   "name": "memory-decay-dashboard",
-  "version": "0.1.0",
-  "private": true,
+  "version": "0.1.1",
+  "bin": {
+    "decay-dashboard": "./bin/decay-dashboard"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",

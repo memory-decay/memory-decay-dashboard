@@ -1,0 +1,70 @@
+#!/usr/bin/env node
+
+/**
+ * memory-decay-dashboard CLI
+ *
+ * Usage:
+ *   decay-dashboard                  # Start dashboard on http://localhost:3000
+ *   decay-dashboard --port 4000      # Custom port
+ *   decay-dashboard --api http://host:8100  # Custom memory-decay server URL
+ */
+
+import { spawn } from "node:child_process";
+import { resolve, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const projectRoot = resolve(__dirname, "..");
+
+const args = process.argv.slice(2);
+
+let port = 3000;
+let apiBaseUrl = "http://localhost:8100";
+
+for (let i = 0; i < args.length; i++) {
+  if (args[i] === "--port" && args[i + 1]) {
+    port = parseInt(args[i + 1], 10);
+    i++;
+  } else if (args[i] === "--api" && args[i + 1]) {
+    apiBaseUrl = args[i + 1];
+    i++;
+  } else if (args[i] === "--help" || args[i] === "-h") {
+    console.log(`
+  memory-decay-dashboard
+
+  Usage:
+    decay-dashboard                  Start on http://localhost:3000
+    decay-dashboard --port 4000      Custom port
+    decay-dashboard --api URL        Custom memory-decay API URL
+
+  Options:
+    --port <number>   Dashboard port (default: 3000)
+    --api <url>       Memory-decay server URL (default: http://localhost:8100)
+    -h, --help        Show this help
+`);
+    process.exit(0);
+  }
+}
+
+const env = {
+  ...process.env,
+  PORT: String(port),
+  NEXT_PUBLIC_API_URL: apiBaseUrl,
+};
+
+const child = spawn("npx", ["next", "dev", "--port", String(port)], {
+  cwd: projectRoot,
+  stdio: "inherit",
+  env,
+});
+
+child.on("exit", (code) => {
+  process.exit(code ?? 0);
+});
+
+// Forward signals
+for (const signal of ["SIGINT", "SIGTERM"] as const) {
+  process.on(signal, () => {
+    child.kill(signal);
+  });
+}
