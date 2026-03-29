@@ -1,9 +1,26 @@
 {
   "name": "memory-decay-dashboard",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "bin": {
     "decay-dashboard": "./bin/decay-dashboard"
   },
+  "files": [
+    "bin/",
+    "app/",
+    "components/",
+    "lib/",
+    "messages/",
+    "data/",
+    "public/",
+    "next.config.ts",
+    "middleware.ts",
+    "postcss.config.mjs",
+    "tailwind.config.ts",
+    "tsconfig.json",
+    "next-env.d.ts",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",
